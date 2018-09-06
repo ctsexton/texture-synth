@@ -1,7 +1,7 @@
 (
 name: 'Track Controller',
 create: {
-	arg self, canvas, looper;
+	arg self, canvas, track;
 	var knobSettings, knobs;
 
 	knobSettings = [
@@ -9,28 +9,28 @@ create: {
 			label: \Position,
 			x: 0,
 			controlSpec: ControlSpec.new(0.001, 0.999),
-			onChange: {|self, val| looper.set(\position, val.value)},
+			onChange: {|self, val| track.setParam('position', val.value)},
 			initVal: 0
 		),
 		(
 			label: \Window,
 			x: 200,
 			controlSpec: ControlSpec.new(0.001, 0.999),
-			onChange: {|self, val| looper.set(\window, val.value)},
+			onChange: {|self, val| track.set(\window, val.value)},
 			initVal: 1
 		),
 		(
 			label: \Rate,
 			x: 400,
 			controlSpec: ControlSpec.new(-2, 2),
-			onChange: {|self, val| looper.set(\rate, val.value)},
+			onChange: {|self, val| track.set(\rate, val.value)},
 			initVal: 1
 		),
 		(
 			label: \Volume,
 			x: 600,
 			controlSpec: ControlSpec.new(0, 1),
-			onChange: {|self, val| looper.set(\volume, val.value)},
+			onChange: {|self, val| track.set(\volume, val.value)},
 			initVal: 1
 		),
 	];

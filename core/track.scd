@@ -1,40 +1,50 @@
 (
 create: {
 	arg self, buffer;
-	var position, window, rate, lowCutoff, hiCutoff, volume, playbackIndex, synth;
-	position = Bus.control();
-	position.set(0);
-	window = Bus.control();
-	window.set(1);
-	rate = Bus.control();
-	rate.set(1);
-	lowCutoff = Bus.control();
-	lowCutoff.set(10000);
-	hiCutoff = Bus.control();
-	hiCutoff.set(20);
-	volume = Bus.control();
-	volume.set(1);
+	var playbackIndex, synth;
+
 	playbackIndex = Bus.control();
 	playbackIndex.set(0);
 	synth = Synth.new(\windowLooper, [
 			\buffer: buffer,
 			\bufFrames: buffer.numFrames,
 			\rate: 1,
-			\window: 1,
+			\window: 0.1,
 			\position: 0,
 			\playhead: playbackIndex,
 			\volume: 1
 		]);
+
 	(
-		position: position,
-		window: window,
-		rate: rate,
-		lowCutoff: lowCutoff,
-		hiCutoff: hiCutoff,
-		volume: volume,
+		position: 0,
+		window: 1,
+		rate: 1,
+		lpfCutoff: 10000,
+		hpfCutoff: 20,
+		volume: 1,
 		buffer: buffer,
 		playbackIndex: playbackIndex,
-		synth: synth
+		synth: synth,
+
+		setParam: {
+			arg self, parameter, newValue;
+
+			self[parameter] = newValue;
+			self.updateSynth(parameter);
+			self.updateGUI();
+			self.updateMIDI();
+		},
+		updateSynth: {
+			arg self, parameter;
+
+			self['synth'].set(parameter, self[parameter]);
+		},
+		updateGUI: {
+			arg self;
+		},
+		updateMIDI: {
+			arg self;
+		}
 	)
 }
 )
