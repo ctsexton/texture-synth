@@ -1,6 +1,7 @@
 (
 //var buffer;
-b = Buffer.read(s, '/home/cts/Pd/soundfilez/funkay1.wav');
+b = Buffer.read(s, '/home/cts/Pd/soundfilez/stopandfrisk.wav');
+MIDIClient.init;
 
 "core/synthdefs.scd".loadRelative[0].add;
 )
