@@ -1,22 +1,18 @@
 (
-//var buffer;
-b = Buffer.read(s, '/home/cts/Pd/soundfilez/stopandfrisk.wav');
+//s.boot();
 MIDIClient.init;
-
+b = Buffer.read(s, '/home/cts/Pd/soundfilez/funkay1.wav');
 "core/synthdefs.scd".loadRelative[0].add;
 )
 
 (
-var ctrls, trackGUI, waveGUI, track, window, synth, positionIndex;
-
-positionIndex = Bus.control();
+var trackGUI, waveGUI, track, window, synth;
 
 window = Window.new('Texture Synth', Rect(100,100,800,400)).front;
 trackGUI = "gui/track-controls.scd".loadRelative[0];
 waveGUI = "gui/track-waveform.scd".loadRelative[0];
 
-track = "core/track.scd".loadRelative[0].create(b, positionIndex);
-track.postln;
+track = "core/track.scd".loadRelative[0].create(b);
 
 synth = Synth.new(\windowLooper, [
 	\buffer: b,
@@ -24,7 +20,7 @@ synth = Synth.new(\windowLooper, [
 	\rate: 1,
 	\window: 1,
 	\position: 0,
-	\playhead: positionIndex,
+	\playhead: track.playbackIndex,
 	\volume: 1
 
 ]);
