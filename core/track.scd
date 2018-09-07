@@ -16,6 +16,7 @@ create: {
 		]);
 
 	(
+		director: nil,
 		position: 0,
 		window: 1,
 		rate: 1,
@@ -26,24 +27,19 @@ create: {
 		playbackIndex: playbackIndex,
 		synth: synth,
 
-		setParam: {
+		setParameter: {
 			arg self, parameter, newValue;
+
+			parameter.postln;
+			newValue.postln;
 
 			self[parameter] = newValue;
 			self.updateSynth(parameter);
-			self.updateGUI();
-			self.updateMIDI();
 		},
 		updateSynth: {
 			arg self, parameter;
 
 			self['synth'].set(parameter, self[parameter]);
-		},
-		updateGUI: {
-			arg self;
-		},
-		updateMIDI: {
-			arg self;
 		}
 	)
 }
