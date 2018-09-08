@@ -53,23 +53,14 @@
 		},
 		accumParameter: {
 			arg self, parameter, accum;
-			var direction, oldVal;
-			oldVal = tracks[0][parameter];
+			var direction, oldVal, newVal;
+			oldVal = self.getParameter(parameter);
 			direction = (accum * 2 - 1) * 0.01;
-			self.setParameter(parameter, oldVal + direction);
+			newVal = oldVal + direction;
 
-			/*if (oldVal <= 0 && accum == 1,
-				{
-					direction = (accum * 2 - 1) * 0.01;
-					tracks[0].setParameter(parameter, oldVal + direction);
-				}
+			if ((newVal >= 0) && (newVal <= 1),
+				{ self.setParameter(parameter, oldVal + direction); }
 			);
-			if (oldVal >= 1 && accum == 0,
-				{
-					direction = (accum * 2 - 1) * 0.01;
-					tracks[0].setParameter(parameter, oldVal + direction);
-				}
-			)*/
 		}
 	)
 }
