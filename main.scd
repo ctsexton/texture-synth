@@ -19,6 +19,5 @@ director.addTrack(track);
 
 guiFactory.create(director);
 mft = mftFactory.create(director);
-mft.postln;
 "Done";
 )

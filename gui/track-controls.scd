@@ -45,7 +45,16 @@ create: {
 	});
 	(
 		director: director,
-		knobs: knobs
+		knobs: knobs,
+		receiveParameter: {
+			arg self, parameter, value;
+			var specs;
+
+			specs = (\position: 0, \window: 1, \rate: 2, \volume: 3);
+
+			{knobs[specs[parameter]].value = value}.defer;
+
+		}
 	)
 }
 )

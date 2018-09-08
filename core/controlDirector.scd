@@ -31,19 +31,17 @@
 			var track, parameter;
 
 			parameter = address;
-			tracks[0].setParameter(parameter, value);
-			/*
-			track = address.track;
-			parameter = address.parameter;
-			tracks[track].setParameter(parameter, value);
+			track = tracks[0];
+
+			track.setParameter(parameter, value);
 			userInterfaces.do({
 				arg item;
 				if (item.subscriptions.includesKey(parameter),
 					{
-						item.ui.receiveParameter(track, parameter);
+						item.ui.receiveParameter(parameter, value);
 				});
 			})
-			*/
+
 
 		},
 		getParameter: {
@@ -56,9 +54,22 @@
 		accumParameter: {
 			arg self, parameter, accum;
 			var direction, oldVal;
-			direction = (accum * 2 - 1) * 0.01;
 			oldVal = tracks[0][parameter];
-			tracks[0].setParameter(parameter, oldVal + direction);
+			direction = (accum * 2 - 1) * 0.01;
+			self.setParameter(parameter, oldVal + direction);
+
+			/*if (oldVal <= 0 && accum == 1,
+				{
+					direction = (accum * 2 - 1) * 0.01;
+					tracks[0].setParameter(parameter, oldVal + direction);
+				}
+			);
+			if (oldVal >= 1 && accum == 0,
+				{
+					direction = (accum * 2 - 1) * 0.01;
+					tracks[0].setParameter(parameter, oldVal + direction);
+				}
+			)*/
 		}
 	)
 }
