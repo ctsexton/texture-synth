@@ -30,7 +30,8 @@ create: {
 			arg self, direction;
 			var accum, oldVal, newVal;
 
-			oldVal = self['currentVal'];
+			oldVal = self['currentValue'];
+
 			accum = (direction * 2 - 1) * increment;
 			newVal = oldVal + accum;
 
