@@ -1,8 +1,7 @@
 SynthDef(\windowLooper, {
-	arg buffer, bufFrames, rate = 1, window, position, playhead, volume;
-	var out, index, feedback, resetPoint, isOutsideBounds, maxWindowSize, outsideBoundsTrigger, lower, upper;
+	arg buffer, bufFrames, rate = 1, window, position, playhead, volume, feedback;
+	var out, index, resetPoint, isOutsideBounds, maxWindowSize, outsideBoundsTrigger, lower, upper;
 
-	feedback = Bus.audio();
 	outsideBoundsTrigger = InFeedback.ar(feedback);
 
 	maxWindowSize = ((position + window) > 1) * (1 - position) + ((position + window) <= 1) * window;

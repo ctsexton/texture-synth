@@ -16,7 +16,7 @@
 
 			uiModel = (
 				ui: userInterface,
-				subscriptions: subscriptions;
+				subscriptions: subscriptions
 			);
 
 			userInterfaces = userInterfaces.add(uiModel);
@@ -27,45 +27,48 @@
 			tracks = tracks.add(track);
 		},
 		getBuffer: {
-			arg self;
-			tracks[0].buffer;
+			arg self, trackIndex;
+			tracks[trackIndex].buffer;
 		},
 		getPlaybackIndex: {
-			arg self;
-			tracks[0].playbackIndex;
+			arg self, trackIndex;
+			tracks[trackIndex].playbackIndex;
 		},
 		getParameter: {
 			arg self, address;
 			var parameter;
 
-			parameter = address;
-			tracks[0].getParameter(parameter);
+			parameter = address['name'];
+			tracks[address['track']].getParameter(parameter);
 		},
 		setParameter: {
 			arg self, address, value;
 			var track, parameter, updatedValue;
 
-			parameter = address;
-			track = tracks[0];
+			parameter = address['name'];
+			track = tracks[address['track']];
 
 			updatedValue = track.setParameter(parameter, value);
-			self.updateAllUIs(parameter, updatedValue);
+			//self.updateAllUIs(address, updatedValue);
 		},
 		accumParameter: {
-			arg self, parameter, accum;
-			var track, updatedValue;
+			arg self, address, accum;
+			var track, updatedValue, parameter;
 
-			track = tracks[0];
+			track = tracks[address['track']];
+			parameter = address['name'];
 			updatedValue = track.accumParameter(parameter, accum);
-			self.updateAllUIs(parameter, updatedValue);
+			self.updateAllUIs(address, updatedValue);
 		},
 		updateAllUIs: {
-			arg self, parameter, value;
+			arg self, address, value;
+			var parameter;
+			parameter = address['name'];
 			userInterfaces.do({
 				arg item;
 				if (item.subscriptions.includesKey(parameter),
 					{
-						item.ui.receiveParameter(parameter, value);
+						item.ui.receiveParameter(address, value);
 				});
 			});
 		}

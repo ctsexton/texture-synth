@@ -4,9 +4,6 @@ midi_to_grid = translatorMaker.newMIDItoGRID(4, False);
 grid_to_midi = translatorMaker.newGRIDtoMIDI(4);
 rangeFactory = "encToRange.scd".loadRelative[0];
 
-
-encoders = Array.fill(4, {rangeFactory.create(0)});
-
 (
 create: {
 	arg self, director;
@@ -15,7 +12,6 @@ create: {
 	mftAction = {
 		arg knobInput;
 		var noteNumber, params;
-		//encoders[knobInput[0]].accum(knobInput[2]);
 		params = [\position, \window, \rate, \volume];
 		director.accumParameter(params[knobInput[0]], knobInput[2]);
 	};

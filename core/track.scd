@@ -2,8 +2,8 @@ var parameter;
 parameter = "parameter.scd".loadRelative[0];
 (
 create: {
-	arg self, buffer, trackIndex = 0;
-	var playbackIndex, synth, position, window, rate, lpfCutoff, hpfCutoff, volume;
+	arg self, buffer, trackIndex;
+	var playbackIndex, synth, position, window, rate, lpfCutoff, hpfCutoff, volume, feedback;
 
 	position = parameter.create('position', trackIndex, 0, 0, 1, 0.01);
 	window = parameter.create('window', trackIndex, 1, 0, 1, 0.01);
@@ -13,16 +13,18 @@ create: {
 	volume = parameter.create('volume', trackIndex, 1, 0, 1, 0.01);
 
 	playbackIndex = Bus.control();
+	feedback = Bus.audio();
 	playbackIndex.set(0);
 
 	synth = Synth.new(\windowLooper, [
-			\buffer: buffer,
-			\bufFrames: buffer.numFrames,
-			\rate: rate.initValue,
-			\window: window.initValue,
-			\position: position.initValue,
-			\playhead: playbackIndex,
-			\volume: volume.initValue
+		\feedback: feedback,
+		\buffer: buffer,
+		\bufFrames: buffer.numFrames,
+		\rate: rate.initValue,
+		\window: window.initValue,
+		\position: position.initValue,
+		\playhead: playbackIndex,
+		\volume: volume.initValue
 		]);
 
 	(
