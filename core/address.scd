@@ -1,7 +1,9 @@
-{
-	arg trackIndex, parameterName;
+(
+create: {
+	arg self, trackIndex, parameterName;
 	(
-		track: trackIndex;
-		parameter: parameterName;
+		track: trackIndex,
+		name: parameterName
 	)
 }
+)

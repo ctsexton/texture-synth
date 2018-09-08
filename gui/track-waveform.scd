@@ -7,7 +7,7 @@ create: {
 	wave = SoundFileView.new(canvas, Rect(0, 0, 800, 200));
 	soundFile = SoundFile.new;
 
-	soundFile.openRead(director.getParameter('buffer').path.asString);
+	soundFile.openRead(director.getBuffer().path.asString);
 
 	wave.soundfile = soundFile;
 	wave.read(0, soundFile.numFrames);
@@ -15,7 +15,7 @@ create: {
 	wave.timeCursorOn = true;
 	wave.timeCursorColor = Color.red;
 	wave.refresh;
-	updateTimeCursor = { director.getParameter('playbackIndex').get({|val| {wave.timeCursorPosition = val}.defer}); 0.02.wait };
+	updateTimeCursor = { director.getPlaybackIndex().get({|val| {wave.timeCursorPosition = val}.defer}); 0.02.wait };
 	Routine({updateTimeCursor.loop}).play;
 }
 )

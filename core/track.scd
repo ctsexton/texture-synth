@@ -1,42 +1,67 @@
+var parameter;
+parameter = "parameter.scd".loadRelative[0];
 (
 create: {
-	arg self, buffer;
-	var playbackIndex, synth;
+	arg self, buffer, trackIndex = 0;
+	var playbackIndex, synth, position, window, rate, lpfCutoff, hpfCutoff, volume;
+
+	position = parameter.create('position', trackIndex, 0, 0, 1, 0.01);
+	window = parameter.create('window', trackIndex, 1, 0, 1, 0.01);
+	rate = parameter.create('rate', trackIndex, 1, -2, 2, 0.01);
+	lpfCutoff = parameter.create('lpfCutoff', trackIndex, 10000, 10, 10000, 1);
+	hpfCutoff = parameter.create('hpfCutoff', trackIndex, 20, 10, 10000, 1);
+	volume = parameter.create('volume', trackIndex, 1, 0, 1, 0.01);
 
 	playbackIndex = Bus.control();
 	playbackIndex.set(0);
+
 	synth = Synth.new(\windowLooper, [
 			\buffer: buffer,
 			\bufFrames: buffer.numFrames,
-			\rate: 1,
-			\window: 0.1,
-			\position: 0,
+			\rate: rate.initValue,
+			\window: window.initValue,
+			\position: position.initValue,
 			\playhead: playbackIndex,
-			\volume: 1
+			\volume: volume.initValue
 		]);
 
 	(
 		director: nil,
-		position: 0,
-		window: 1,
-		rate: 1,
-		lpfCutoff: 10000,
-		hpfCutoff: 20,
-		volume: 1,
+		position: position,
+		window: window,
+		rate: rate,
+		lpfCutoff: lpfCutoff,
+		hpfCutoff: hpfCutoff,
+		volume: volume,
 		buffer: buffer,
 		playbackIndex: playbackIndex,
 		synth: synth,
 
+		getParameter: {
+			arg self, parameter;
+
+			self[parameter].getValue();
+		},
 		setParameter: {
 			arg self, parameter, newValue;
+			var updatedValue;
 
-			self[parameter] = newValue;
+			updatedValue = self[parameter].setValue(newValue);
 			self.updateSynth(parameter);
+			updatedValue;
+		},
+		accumParameter: {
+			arg self, parameter, direction;
+			var updatedValue;
+
+			updatedValue = self[parameter].accumValue(direction);
+			self.updateSynth(parameter);
+			updatedValue;
 		},
 		updateSynth: {
 			arg self, parameter;
 
-			self['synth'].set(parameter, self[parameter]);
+			self['synth'].set(parameter, self[parameter].getValue());
 		}
 	)
 }

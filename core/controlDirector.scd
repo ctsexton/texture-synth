@@ -26,41 +26,48 @@
 			arg self, track;
 			tracks = tracks.add(track);
 		},
-		setParameter: {
-			arg self, address, value;
-			var track, parameter;
-
-			parameter = address;
-			track = tracks[0];
-
-			track.setParameter(parameter, value);
-			userInterfaces.do({
-				arg item;
-				if (item.subscriptions.includesKey(parameter),
-					{
-						item.ui.receiveParameter(parameter, value);
-				});
-			})
-
-
+		getBuffer: {
+			arg self;
+			tracks[0].buffer;
+		},
+		getPlaybackIndex: {
+			arg self;
+			tracks[0].playbackIndex;
 		},
 		getParameter: {
 			arg self, address;
 			var parameter;
 
 			parameter = address;
-			tracks[0][parameter];
+			tracks[0].getParameter(parameter);
+		},
+		setParameter: {
+			arg self, address, value;
+			var track, parameter, updatedValue;
+
+			parameter = address;
+			track = tracks[0];
+
+			updatedValue = track.setParameter(parameter, value);
+			self.updateAllUIs(parameter, updatedValue);
 		},
 		accumParameter: {
 			arg self, parameter, accum;
-			var direction, oldVal, newVal;
-			oldVal = self.getParameter(parameter);
-			direction = (accum * 2 - 1) * 0.01;
-			newVal = oldVal + direction;
+			var track, updatedValue;
 
-			if ((newVal >= 0) && (newVal <= 1),
-				{ self.setParameter(parameter, oldVal + direction); }
-			);
+			track = tracks[0];
+			updatedValue = track.accumParameter(parameter, accum);
+			self.updateAllUIs(parameter, updatedValue);
+		},
+		updateAllUIs: {
+			arg self, parameter, value;
+			userInterfaces.do({
+				arg item;
+				if (item.subscriptions.includesKey(parameter),
+					{
+						item.ui.receiveParameter(parameter, value);
+				});
+			});
 		}
 	)
 }
