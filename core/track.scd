@@ -30,9 +30,6 @@ create: {
 		setParameter: {
 			arg self, parameter, newValue;
 
-			parameter.postln;
-			newValue.postln;
-
 			self[parameter] = newValue;
 			self.updateSynth(parameter);
 		},

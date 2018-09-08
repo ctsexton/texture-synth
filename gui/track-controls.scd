@@ -2,7 +2,6 @@
 create: {
 	arg self, canvas, director;
 	var knobSettings, knobs;
-	director.postln;
 
 	knobSettings = [
 		(

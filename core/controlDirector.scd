@@ -13,7 +13,6 @@
 				arg item;
 				subscriptions.put(item, 1);
 			});
-			subscriptions.postln;
 
 			uiModel = (
 				ui: userInterface,
@@ -46,6 +45,13 @@
 			})
 			*/
 
+		},
+		getParameter: {
+			arg self, address;
+			var parameter;
+
+			parameter = address;
+			tracks[0][parameter];
 		}
 	)
 }
