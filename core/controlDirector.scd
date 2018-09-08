@@ -52,6 +52,13 @@
 
 			parameter = address;
 			tracks[0][parameter];
+		},
+		accumParameter: {
+			arg self, parameter, accum;
+			var direction, oldVal;
+			direction = (accum * 2 - 1) * 0.01;
+			oldVal = tracks[0][parameter];
+			tracks[0].setParameter(parameter, oldVal + direction);
 		}
 	)
 }

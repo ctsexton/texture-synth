@@ -8,7 +8,6 @@ create: {
 	trackGUI = trackGuiFactory.create(CompositeView.new(window, Rect(0, 0, 800, 200)), director);
 	waveGUI = waveGuiFactory.create(CompositeView.new(window, Rect(0, 200, 800, 200)), director);
 
-
 	director.registerUI(trackGUI, [\position, \window, \rate, \volume]);
 	//director.registerUI(waveGUI, [\playbackIndex]);
 }

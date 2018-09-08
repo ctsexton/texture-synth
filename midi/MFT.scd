@@ -2,7 +2,7 @@ var translatorMaker;
 translatorMaker = "translator.scd".loadRelative[0];
 
 (
-mft: nil,
+director: nil,
 new: {
 	arg self;
 	var midi_to_grid, grid_to_midi;
