@@ -10,7 +10,7 @@ create: {
 	rate = parameter.create('rate', trackIndex, 1, -2, 2, 0.01);
 	lpfCutoff = parameter.create('lpfCutoff', trackIndex, 10000, 10, 10000, 1);
 	hpfCutoff = parameter.create('hpfCutoff', trackIndex, 20, 10, 10000, 1);
-	volume = parameter.create('volume', trackIndex, 1, 0, 1, 0.01);
+	volume = parameter.create('volume', trackIndex, 0, 0, 1, 0.01);
 
 	playbackIndex = Bus.control();
 	feedback = Bus.audio();

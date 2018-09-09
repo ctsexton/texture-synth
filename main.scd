@@ -11,7 +11,7 @@ var trackFactory, trackA, trackB, addressFactory, trackAddress, guiFactory, gui,
 director = "core/controlDirector.scd".loadRelative[0].value();
 guiFactory = "gui/top.scd".loadRelative[0];
 trackFactory = "core/track.scd".loadRelative[0];
-mftFactory = "midi/mftFactory.scd".loadRelative[0];
+mftFactory = "midi/mft.scd".loadRelative[0];
 
 trackA = trackFactory.create(b);
 trackB = trackFactory.create(c);
@@ -19,6 +19,6 @@ director.addTrack(trackA);
 director.addTrack(trackB);
 
 guiFactory.create(director);
-// mft = mftFactory.create(director);
+mft = mftFactory.create(director);
 // "Done";
 )

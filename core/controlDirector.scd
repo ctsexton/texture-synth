@@ -49,7 +49,7 @@
 			track = tracks[address['track']];
 
 			updatedValue = track.setParameter(parameter, value);
-			//self.updateAllUIs(address, updatedValue);
+			self.updateAllUIs(address, updatedValue);
 		},
 		accumParameter: {
 			arg self, address, accum;
