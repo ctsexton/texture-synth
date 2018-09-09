@@ -5,7 +5,6 @@ addressFactory = "address.scd".loadRelative[0];
 create: {
 	arg self, name, trackIndex, initVal, min, max, increment;
 	var address;
-
 	address = addressFactory.create(trackIndex, name);
 	(
 		currentValue: initVal,
@@ -38,6 +37,7 @@ create: {
 			if ((newVal >= min) && (newVal <= max),
 				{ self.setValue(newVal); }
 			);
+
 			newVal;
 		}
 	)

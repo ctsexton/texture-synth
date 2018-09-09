@@ -4,7 +4,7 @@ create: {
 	arg self, canvas, director, trackIndex;
 	var wave, soundFile, updateTimeCursor;
 
-	wave = SoundFileView.new(canvas, Rect(0, 0, 800, 200));
+	wave = SoundFileView.new(canvas, Rect(0, 0, 600, 200));
 	soundFile = SoundFile.new;
 
 	soundFile.openRead(director.getBuffer(trackIndex).path.asString);

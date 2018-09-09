@@ -7,8 +7,8 @@ create: {
 	var knobSettings, knobs, addresses, specsArr;
 
 	addresses = [];
-	specsArr = [\position, \window, \rate, \volume];
-	for (0, 3, {arg i; addresses = addresses.add(addressFactory.create(trackIndex, specsArr[i]))});
+	specsArr = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
+	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(trackIndex, specsArr[i]))});
 
 	knobSettings = [
 		(
@@ -33,11 +33,25 @@ create: {
 			initVal: 1
 		),
 		(
-			label: \Volume,
+			label: \LPF,
 			x: 600,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(addresses[3], val.value)},
 			initVal: 1
+		),
+		(
+			label: \HPF,
+			x: 800,
+			controlSpec: ControlSpec.new(0, 1),
+			onChange: {|self, val| director.setParameter(addresses[4], val.value)},
+			initVal: 0
+		),
+		(
+			label: \Volume,
+			x: 1000,
+			controlSpec: ControlSpec.new(0, 1),
+			onChange: {|self, val| director.setParameter(addresses[5], val.value)},
+			initVal: 0
 		),
 	];
 	knobs = knobSettings.collect({
@@ -55,7 +69,7 @@ create: {
 		receiveParameter: {
 			arg self, address, value;
 			var specs, parameter;
-			specs = (\position: 0, \window: 1, \rate: 2, \volume: 3);
+			specs = (\position: 0, \window: 1, \rate: 2, \lpfCutoff: 3, \hpfCutoff: 4, \volume: 5);
 
 			if (address['track'] == trackIndex, {
 				parameter = address['name'];

@@ -8,8 +8,8 @@ create: {
 	position = parameter.create('position', trackIndex, 0, 0, 1, 0.01);
 	window = parameter.create('window', trackIndex, 1, 0, 1, 0.01);
 	rate = parameter.create('rate', trackIndex, 1, -2, 2, 0.01);
-	lpfCutoff = parameter.create('lpfCutoff', trackIndex, 10000, 10, 10000, 1);
-	hpfCutoff = parameter.create('hpfCutoff', trackIndex, 20, 10, 10000, 1);
+	lpfCutoff = parameter.create('lpfCutoff', trackIndex, 1, 0, 1, 0.005);
+	hpfCutoff = parameter.create('hpfCutoff', trackIndex, 0, 0, 1, 0.005);
 	volume = parameter.create('volume', trackIndex, 0, 0, 1, 0.01);
 
 	playbackIndex = Bus.control();
@@ -24,7 +24,9 @@ create: {
 		\window: window.initValue,
 		\position: position.initValue,
 		\playhead: playbackIndex,
-		\volume: volume.initValue
+		\volume: volume.initValue,
+		\lpfCutoff: lpfCutoff.initValue,
+		\hpfCutoff: hpfCutoff.initValue
 		]);
 
 	(
