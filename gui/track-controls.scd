@@ -3,12 +3,21 @@ addressFactory = "../core/address.scd".loadRelative[0];
 
 (
 create: {
-	arg self, canvas, director, trackIndex;
-	var knobSettings, knobs, addresses, specsArr;
+	arg self, canvas, director, track;
+	var startStop, knobSettings, knobs, addresses, specsArr;
 
 	addresses = [];
 	specsArr = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
-	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(trackIndex, specsArr[i]))});
+	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(track, specsArr[i]))});
+
+	startStop = Button.new(canvas, Rect(0, 0, 100, 200));
+
+	startStop.states = [["Start", Color.white, Color.black], ["Stop", Color.black, Color.white]];
+
+	startStop.action = {
+		arg button;
+		director.togglePlayback(track, button.value);
+	};
 
 	knobSettings = [
 		(
@@ -57,7 +66,7 @@ create: {
 	knobs = knobSettings.collect({
 		arg knob;
 		var ezKnob;
-		EZKnob.new(canvas, Rect(knob.x, 0, 200, 200), knob.label, knob.controlSpec, {|val| knob.onChange(val)}, knob.initVal);
+		EZKnob.new(canvas, Rect(knob.x + 100, 0, 200, 200), knob.label, knob.controlSpec, {|val| knob.onChange(val)}, knob.initVal);
 	});
 	knobs.do({
 		|knob|
@@ -71,7 +80,7 @@ create: {
 			var specs, parameter;
 			specs = (\position: 0, \window: 1, \rate: 2, \lpfCutoff: 3, \hpfCutoff: 4, \volume: 5);
 
-			if (address['track'] == trackIndex, {
+			if (address['track'] == track, {
 				parameter = address['name'];
 				{knobs[specs[parameter]].value = value}.defer;
 			});

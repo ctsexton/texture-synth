@@ -1,5 +1,5 @@
 SynthDef(\windowLooper, {
-	arg buffer, bufFrames, rate = 1, window, position, playhead, volume, feedback, lpfCutoff, hpfCutoff;
+	arg buffer, bufFrames, rate = 1, window, position, playhead, volume, feedback, lpfCutoff, hpfCutoff, stop;
 	var out, index, resetPoint, isOutsideBounds, maxWindowSize, outsideBoundsTrigger, lower, upper;
 
 	outsideBoundsTrigger = InFeedback.ar(feedback);
@@ -15,5 +15,7 @@ SynthDef(\windowLooper, {
 	out = BufRd.ar(1, buffer, index * bufFrames, 1, 4) * volume;
 	out = HPF.ar(RLPF.ar(out, lpfCutoff.linexp(0, 1, 50, 10000), 1), hpfCutoff.lincurve(0, 1, 10, 2500, -2));
 
-	Out.ar(0, out!4)
+	Out.ar(0, out!4);
+	FreeSelf.kr(stop);
+	//stop.poll;
 });

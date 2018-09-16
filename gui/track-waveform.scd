@@ -15,7 +15,15 @@ create: {
 	wave.timeCursorOn = true;
 	wave.timeCursorColor = Color.red;
 	wave.refresh;
+	wave.mouseUpAction = {wave.selections[wave.currentSelection].postln};
 	updateTimeCursor = { director.getPlaybackIndex(trackIndex).get({|val| {wave.timeCursorPosition = val}.defer}); 0.02.wait };
 	Routine({updateTimeCursor.loop}).play;
+
+	(
+		receiveParameter: {
+			arg self, param;
+			param.postln;
+		}
+	);
 }
 )

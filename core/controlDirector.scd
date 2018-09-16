@@ -60,6 +60,13 @@
 			updatedValue = track.accumParameter(parameter, accum);
 			self.updateAllUIs(address, updatedValue);
 		},
+		togglePlayback: {
+			arg self, trackIndex, value;
+			if (value == 1,
+				{ tracks[trackIndex].start() },
+				{ tracks[trackIndex].stopSynth() }
+			);
+		},
 		updateAllUIs: {
 			arg self, address, value;
 			var parameter;
