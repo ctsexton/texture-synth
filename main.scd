@@ -3,14 +3,21 @@ var main;
 main = {
 	var samplePath, samples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft;
 
-	samplePath = thisProcess.nowExecutingPath.dirname;
+  samplePath = {
+    try(
+      {"TRY".postln; thisProcess.nowExecutingPath.dirname;},
+      {"CATCH".postln; File.getcwd;}
+    );
+  }.value();
 	director = "core/controlDirector.scd".loadRelative[0].value();
 	guiFactory = "gui/top.scd".loadRelative[0];
 	trackFactory = "core/track.scd".loadRelative[0];
 	mftFactory = "midi/mft.scd".loadRelative[0];
 	"core/synthdefs.scd".loadRelative[0].add;
 
-	//MIDIClient.init;
+  QtGUI.palette = QPalette.dark;
+
+	MIDIClient.init;
 
 	samples = ['08_Chains.wav', '13_Contact Mic 1.wav', '09_Floor Tom.wav', '01_Piano.wav'];
 
@@ -24,11 +31,9 @@ main = {
 	});
 
 	guiFactory.create(director);
-	//mft = mftFactory.create(director);
+	mft = mftFactory.create(director);
 	// "Done";
 };
 
 s.waitForBoot(main);
 )
-
-t[0].start()

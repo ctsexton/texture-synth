@@ -3,6 +3,7 @@ create: {
 	|self, director|
 	var window, trackGuiFactory, trackGUI, waveGuiFactory, waveGUI, trackGUI_B, waveGUI_B, trackGUI_C, waveGUI_C, trackGUI_D, waveGUI_D;
 	window = Window.new('Texture Synth', Rect(0,0,1300,1600)).front;
+	//window.background = Color.white;
 	trackGuiFactory = "gui/track-controls.scd".loadRelative[0];
 	waveGuiFactory = "gui/track-waveform.scd".loadRelative[0];
 

@@ -1,10 +1,10 @@
 var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, levelOneParams, levelTwoParams, addressesA, addressesB, addressFactory;
 translatorMaker = "translator.scd".loadRelative[0];
+rangeFactory = "encToRange.scd".loadRelative[0];
+addressFactory = "../core/address.scd".loadRelative[0];
+
 midi_to_grid = translatorMaker.newMIDItoGRID(4, False);
 grid_to_midi = translatorMaker.newGRIDtoMIDI(4);
-rangeFactory = "encToRange.scd".loadRelative[0];
-
-addressFactory = "../core/address.scd".loadRelative[0];
 levelOneParams = [\position, \rate, \lpfCutoff, \volume];
 levelTwoParams = [\window, \rate, \hpfCutoff, \volume];
 addressesA = [[],[],[],[]];

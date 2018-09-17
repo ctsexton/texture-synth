@@ -3,12 +3,12 @@ addressFactory = "../core/address.scd".loadRelative[0];
 
 (
 create: {
-	arg self, canvas, director, track;
+	arg self, canvas, director, trackIndex;
 	var startStop, knobSettings, knobs, addresses, specsArr;
 
 	addresses = [];
 	specsArr = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
-	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(track, specsArr[i]))});
+	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(trackIndex, specsArr[i]))});
 
 	startStop = Button.new(canvas, Rect(0, 0, 100, 200));
 
@@ -16,7 +16,7 @@ create: {
 
 	startStop.action = {
 		arg button;
-		director.togglePlayback(track, button.value);
+		director.togglePlayback(trackIndex, button.value);
 	};
 
 	knobSettings = [
@@ -80,7 +80,7 @@ create: {
 			var specs, parameter;
 			specs = (\position: 0, \window: 1, \rate: 2, \lpfCutoff: 3, \hpfCutoff: 4, \volume: 5);
 
-			if (address['track'] == track, {
+			if (address['track'] == trackIndex, {
 				parameter = address['name'];
 				{knobs[specs[parameter]].value = value}.defer;
 			});
