@@ -1,7 +1,7 @@
 (
 create: {
 	|self, director|
-	var window, trackGUIFactory, waveGUIFactory, makeTrackGUI, allTrackGUIs, setInitialSoundFile;
+	var window, trackGUIFactory, waveGUIFactory, makeTrackGUI, allTrackGUIs, setInitialSoundFile, startTimeCursors;
 	window = Window.new('Texture Synth', Rect(0,0,1300,1600)).front;
 	trackGUIFactory = "gui/track-controls.scd".loadRelative[0];
 	waveGUIFactory = "gui/track-waveform.scd".loadRelative[0];
@@ -22,17 +22,21 @@ create: {
     )
   };
 
-  // sound files should be passed in and created elsewhere
   setInitialSoundFile = {
     arg trackGUI, index;
     var soundFile;
-    soundFile = SoundFile.new;
-    soundFile.openRead(director.getBuffer(index).path.asString);
+    soundFile = director.getSoundFile(index);
     trackGUI.waveformGUI.updateSoundFile(soundFile);
+  };
+  startTimeCursors = {
+    arg trackGUI;
+    trackGUI.waveformGUI.startTimeCursor();
   };
 
   allTrackGUIs = 4.collect(makeTrackGUI);
   allTrackGUIs.do(setInitialSoundFile);
+  allTrackGUIs.do(startTimeCursors);
+  allTrackGUIs;
 }
 )
 

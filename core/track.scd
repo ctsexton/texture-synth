@@ -2,8 +2,10 @@ var parameter;
 parameter = "parameter.scd".loadRelative[0];
 (
 create: {
-	arg self, buffer, trackIndex;
-	var playbackIndex, synth, feedback;
+	arg self, allSamples, trackIndex;
+	var playbackIndex, synth, feedback, initialSound;
+
+  initialSound = allSamples[trackIndex];
 
 	playbackIndex = Bus.control();
 	feedback = Bus.audio();
@@ -11,7 +13,8 @@ create: {
 
 	(
 		director: nil,
-		buffer: buffer,
+		buffer: initialSound.buffer,
+    soundFile: initialSound.soundFile,
 		playbackIndex: playbackIndex,
 		position: parameter.create('position', trackIndex, 0, 0, 1, 0.01),
 		window: parameter.create('window', trackIndex, 1, 0, 1, 0.01),

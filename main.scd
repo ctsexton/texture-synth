@@ -1,7 +1,7 @@
 (
 var main;
 main = {
-	var sampleFolderPath, samples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft;
+	var sampleFolderPath, sampleFactory, samplePaths, allSamples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft;
 
   sampleFolderPath = {
     var appDirectory;
@@ -16,18 +16,22 @@ main = {
 	trackFactory = "core/track.scd".loadRelative[0];
 	mftFactory = "midi/mft.scd".loadRelative[0];
 	"core/synthdefs.scd".loadRelative[0].add;
+  sampleFactory = "core/sample.scd".loadRelative[0];
+  
+  samplePaths = PathName.new(sampleFolderPath).files;
+  allSamples = samplePaths.collect({
+    arg path, s;
+    sampleFactory.create(path.fullPath);
+  });
 
+  tracks = 4.collect({
+    arg index;
+    var track;
 
-	samples = ['08_Chains.wav', '13_Contact Mic 1.wav', '09_Floor Tom.wav', '01_Piano.wav'];
-
-	t = samples.collect({
-		arg name;
-		var buffer, track;
-		buffer = Buffer.read(s, sampleFolderPath +/+ name);
-		track = trackFactory.create(buffer);
+    track = trackFactory.create(allSamples, index);
 		director.addTrack(track);
 		track;
-	});
+  });
 
   QtGUI.palette = QPalette.dark;
 	guiFactory.create(director);

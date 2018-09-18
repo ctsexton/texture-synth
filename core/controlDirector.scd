@@ -30,6 +30,10 @@
 			arg self, trackIndex;
 			tracks[trackIndex].buffer;
 		},
+    getSoundFile: {
+			arg self, trackIndex;
+			tracks[trackIndex].soundFile;
+    },
 		getPlaybackIndex: {
 			arg self, trackIndex;
 			tracks[trackIndex].playbackIndex;

@@ -5,7 +5,7 @@ addressFactory = "../core/address.scd".loadRelative[0];
 name: "Track Waveform Viewer",
 create: {
 	arg self, canvas, director, trackIndex;
-	var wave, waveformViewer, soundFile, updateTimeCursor, positionAddress, windowAddress;
+	var wave, waveformViewer, soundFile, updateTimeCursor, timeCursorRoutine, positionAddress, windowAddress;
 
 	positionAddress = addressFactory.create(trackIndex, 'position');
 	windowAddress = addressFactory.create(trackIndex, 'window');
@@ -23,6 +23,9 @@ create: {
     director.setParameter(positionAddress, position);
     director.setParameter(windowAddress, window);
   };
+
+	updateTimeCursor = { director.getPlaybackIndex(trackIndex).get({|val| {wave.timeCursorPosition = val}.defer}); 0.02.wait };
+	timeCursorRoutine = Routine({updateTimeCursor.loop});
   
 
 	waveformViewer = (
@@ -45,13 +48,17 @@ create: {
 					\window, {{wave.setSelectionSize(0, value * frames)}.defer;}
 				);
 			});
-		}
+		},
+    startTimeCursor: {
+      timeCursorRoutine.play;
+    },
+    stopTimeCursor: {
+      timeCursorRoutine.stop;
+    }
 	);
 
 
   // should this start/stop with the track playback? probably.
-	//updateTimeCursor = { director.getPlaybackIndex(trackIndex).get({|val| {wave.timeCursorPosition = val}.defer}); 0.02.wait };
-	//Routine({updateTimeCursor.loop}).play;
 
   waveformViewer;
 }
