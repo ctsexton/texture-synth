@@ -34,7 +34,7 @@ main = {
   });
 
   QtGUI.palette = QPalette.dark;
-	guiFactory.create(director);
+	guiFactory.create(director, allSamples);
 
 	//MIDIClient.init;
 	//mft = mftFactory.create(director);

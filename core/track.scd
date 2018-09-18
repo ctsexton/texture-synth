@@ -72,7 +72,14 @@ create: {
 			arg self, parameter;
 
 			self.theSynth.set(parameter, self[parameter].getValue());
-		}
+		},
+    switchSample: {
+      arg self, sample;
+
+      self['buffer'] = sample.buffer;
+      self['soundFile'] = sample.soundFile;
+			self.theSynth.set(parameter, self[parameter]);
+    }
 	)
 }
 )

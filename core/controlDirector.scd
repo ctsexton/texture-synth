@@ -55,6 +55,11 @@
 			updatedValue = track.setParameter(parameter, value);
 			self.updateAllUIs(address, updatedValue);
 		},
+    switchSoundFile: {
+			arg self, address, newSoundFile;
+			tracks[address['track']].switchSample(newSoundFile);
+			self.updateAllUIs(address, newSoundFile);
+    },
 		accumParameter: {
 			arg self, address, accum;
 			var track, updatedValue, parameter;

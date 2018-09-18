@@ -1,6 +1,6 @@
 (
 create: {
-	|self, director|
+	|self, director, allSamples|
 	var window, trackGUIFactory, waveGUIFactory, makeTrackGUI, allTrackGUIs, setInitialSoundFile, startTimeCursors;
 	window = Window.new('Texture Synth', Rect(0,0,1300,1600)).front;
 	trackGUIFactory = "gui/track-controls.scd".loadRelative[0];
@@ -12,9 +12,9 @@ create: {
 
     trackView = CompositeView.new(window, Rect(0, 250 * index, 1900, 200));
     trackControls = trackGUIFactory.create(CompositeView.new(trackView, Rect(0, 0, 1300, 200)), director, index);
-	  waveformGUI = waveGUIFactory.create(CompositeView.new(trackView, Rect(1300, 0, 600, 200)), director, index);
+	  waveformGUI = waveGUIFactory.create(CompositeView.new(trackView, Rect(1300, 0, 600, 200)), director, allSamples, index);
 	  director.registerUI(trackControls, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
-	  director.registerUI(waveformGUI, [\position, \window, \buffer]);
+	  director.registerUI(waveformGUI, [\position, \window, \soundFile]);
 
     (
       waveformGUI: waveformGUI,

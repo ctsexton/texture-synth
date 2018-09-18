@@ -1,16 +1,19 @@
-var addressFactory;
+var addressFactory, sampleMenuFactory;
 addressFactory = "../core/address.scd".loadRelative[0];
+sampleMenuFactory = "./sampleMenu.scd".loadRelative[0];
 
 (
 name: "Track Waveform Viewer",
 create: {
-	arg self, canvas, director, trackIndex;
-	var wave, waveformViewer, soundFile, updateTimeCursor, timeCursorRoutine, positionAddress, windowAddress;
+	arg self, canvas, director, allSamples, trackIndex;
+	var wave, waveformViewer, soundFile, updateTimeCursor, timeCursorRoutine, positionAddress, windowAddress, sampleMenu;
 
 	positionAddress = addressFactory.create(trackIndex, 'position');
 	windowAddress = addressFactory.create(trackIndex, 'window');
 
-	wave = SoundFileView.new(canvas, Rect(0, 0, 600, 200));
+  sampleMenu = sampleMenuFactory.create(director, canvas, allSamples, trackIndex);
+
+	wave = SoundFileView.new(canvas, Rect(0, 20, 600, 178));
 	wave.gridOn = false;
 	wave.timeCursorOn = true;
 	wave.timeCursorColor = Color.red;
@@ -45,7 +48,8 @@ create: {
 				frames = director.getBuffer(trackIndex).numFrames;
 				switch (parameter,
 					\position, {{wave.setSelectionStart(0, value * frames)}.defer},
-					\window, {{wave.setSelectionSize(0, value * frames)}.defer;}
+					\window, {{wave.setSelectionSize(0, value * frames)}.defer;},
+          \soundFile, {{self.updateSoundFile(director.getSoundFile(trackIndex);)}.defer}
 				);
 			});
 		},
