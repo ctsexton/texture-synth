@@ -78,7 +78,8 @@ create: {
 
       self['buffer'] = sample.buffer;
       self['soundFile'] = sample.soundFile;
-			self.theSynth.set(parameter, self[parameter]);
+			self.theSynth.set('buffer', self['buffer']);
+      self.theSynth.set('bufFrames', self['buffer'].numFrames);
     }
 	)
 }

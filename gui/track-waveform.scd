@@ -34,9 +34,16 @@ create: {
 	waveformViewer = (
     updateSoundFile: {
       arg self, soundFile;
+      var position, window;
         wave.soundfile = soundFile;
         wave.read(0, soundFile.numFrames);
         wave.refresh;
+        //position = director.getParameter(positionAddress);
+        //window = director.getParameter(windowAddress);
+        //position.postln;
+        //window.postln;
+        //self.receiveParameter(positionAddress, position);
+        //self.receiveParameter(windowAddress, window);
     },
 		receiveParameter: {
 			arg self, address, value;
