@@ -2,8 +2,9 @@
 var main;
 ~global_APP_DIRECTORY = File.getcwd;
 main = {
-	var sampleFolderPath, sampleFactory, samplePaths, allSamples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft;
+	var sampleFolderPath, sampleFactory, samplePaths, allSamples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft, setInitialSoundFile, allTrackGUIs;
 
+  addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
   sampleFolderPath = {
     var appDirectory;
     appDirectory = try(
@@ -34,8 +35,18 @@ main = {
 		track;
   });
 
+  setInitialSoundFile = {
+    arg trackGUI, index;
+    var soundFile, address;
+    addressFactory.postln;
+    address = addressFactory.create(index, 'soundFile');
+    soundFile = allSamples[index];
+    trackGUI.waveformGUI.receiveParameter(address, soundFile);
+  };
+
   QtGUI.palette = QPalette.dark;
-	guiFactory.create(director, allSamples);
+	allTrackGUIs = guiFactory.create(director, allSamples);
+  allTrackGUIs.do(setInitialSoundFile);
 
 	//MIDIClient.init;
 	//mft = mftFactory.create(director);

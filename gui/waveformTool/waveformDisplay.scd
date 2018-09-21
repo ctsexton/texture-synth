@@ -1,4 +1,3 @@
-
 (
   create: {
     arg self, canvas, bounds, onDrag, playhead;
