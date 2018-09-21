@@ -70,11 +70,14 @@
 			self.updateAllUIs(address, updatedValue);
 		},
 		togglePlayback: {
-			arg self, trackIndex, value;
+			arg self, address, value;
+      var trackIndex;
+      trackIndex = address['track'];
 			if (value == 1,
-				{ tracks[trackIndex].start() },
+				{ tracks[trackIndex].start()},
 				{ tracks[trackIndex].stopSynth() }
 			);
+      self.updateAllUIs(address, value);
 		},
 		updateAllUIs: {
 			arg self, address, value;

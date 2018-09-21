@@ -1,5 +1,6 @@
 (
 var main;
+~global_APP_DIRECTORY = File.getcwd;
 main = {
 	var sampleFolderPath, sampleFactory, samplePaths, allSamples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft;
 

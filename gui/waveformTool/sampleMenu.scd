@@ -1,5 +1,5 @@
 var addressFactory, sampleMenuFactory;
-addressFactory = "../core/address.scd".loadRelative[0];
+addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 
 (
   create: {
@@ -8,7 +8,6 @@ addressFactory = "../core/address.scd".loadRelative[0];
 
 	  sampleAddress = addressFactory.create(trackIndex, 'soundFile');
 
-    itemAction = {};
     items = allSamples.collect({
       arg item, i;
       allSamples[i].soundFile.path -> {director.switchSoundFile(sampleAddress, allSamples[i])};

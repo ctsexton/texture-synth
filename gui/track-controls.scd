@@ -4,19 +4,18 @@ addressFactory = "../core/address.scd".loadRelative[0];
 (
 create: {
 	arg self, canvas, director, trackIndex;
-	var startStop, knobSettings, knobs, addresses, specsArr;
+	var startStop, knobSettings, knobs, addresses, specs;
 
-	addresses = [];
-	specsArr = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
-	for (0, 5, {arg i; addresses = addresses.add(addressFactory.create(trackIndex, specsArr[i]))});
+	specs = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume, \status];
 
+  addresses = specs.collect({ |item| addressFactory.create(trackIndex, item); });
 	startStop = Button.new(canvas, Rect(0, 0, 100, 200));
 
 	startStop.states = [["Start", Color.white, Color.black], ["Stop", Color.black, Color.white]];
 
 	startStop.action = {
 		arg button;
-		director.togglePlayback(trackIndex, button.value);
+		director.togglePlayback(addresses[6], button.value);
 	};
 
 	knobSettings = [
