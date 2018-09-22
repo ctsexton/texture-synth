@@ -46,12 +46,13 @@
       },
       stopPlayhead: {
         timeCursorAnimation.stop;
+        timeCursorAnimation.reset;
       },
       togglePlayhead: {
         arg self, value;
         switch (value,
           1, { timeCursorAnimation.play },
-          0, { timeCursorAnimation.stop }
+          0, { timeCursorAnimation.stop; timeCursorAnimation.reset }
         )
       }
     )
