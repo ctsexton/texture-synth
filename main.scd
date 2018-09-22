@@ -1,36 +1,24 @@
 (
-var main;
-~global_APP_DIRECTORY = File.getcwd;
+var main, sampleLoader, trackFactory, addressFactory, guiFactory, director, mftFactory, storageFactory;
+~global_APP_DIRECTORY = thisProcess.nowExecutingPath.dirname.asString;
+addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
+director = "core/controlDirector.scd".loadRelative[0].value();
+guiFactory = "gui/top.scd".loadRelative[0];
+trackFactory = "core/track.scd".loadRelative[0];
+mftFactory = "midi/mft.scd".loadRelative[0];
+storageFactory = "core/storage.scd".loadRelative[0];
+sampleLoader = "core/sampleLoader.scd".loadRelative[0];
 main = {
-	var sampleFolderPath, sampleFactory, samplePaths, allSamples, trackFactory, tracks, addressFactory, trackAddress, guiFactory, gui, director, mftFactory, mft, setInitialSoundFile, allTrackGUIs;
+	var samples, tracks, mft, setInitialSoundFile, allTrackGUIs, storage;
 
-  addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
-  sampleFolderPath = {
-    var appDirectory;
-    appDirectory = try(
-      {"TRY".postln; thisProcess.nowExecutingPath.dirname;},
-      {"CATCH".postln; File.getcwd;}
-    );
-    appDirectory +/+ 'samples/';
-  }.value();
-	director = "core/controlDirector.scd".loadRelative[0].value();
-	guiFactory = "gui/top.scd".loadRelative[0];
-	trackFactory = "core/track.scd".loadRelative[0];
-	mftFactory = "midi/mft.scd".loadRelative[0];
 	"core/synthdefs.scd".loadRelative[0].add;
-  sampleFactory = "core/sample.scd".loadRelative[0];
-  
-  samplePaths = PathName.new(sampleFolderPath).files;
-  allSamples = samplePaths.collect({
-    arg path, s;
-    sampleFactory.create(path.fullPath);
-  });
 
+  samples = sampleLoader.create(sampleLoader.getRelativeFolderPath('samples'));
   tracks = 4.collect({
     arg index;
     var track;
 
-    track = trackFactory.create(allSamples, index);
+    track = trackFactory.create(samples, index);
 		director.addTrack(track);
 		track;
   });
@@ -40,13 +28,16 @@ main = {
     var soundFile, address;
     addressFactory.postln;
     address = addressFactory.create(index, 'soundFile');
-    soundFile = allSamples[index];
+    soundFile = samples[index];
     trackGUI.waveformGUI.receiveParameter(address, soundFile);
   };
 
   QtGUI.palette = QPalette.dark;
-	allTrackGUIs = guiFactory.create(director, allSamples);
+	allTrackGUIs = guiFactory.create(director, samples);
   allTrackGUIs.do(setInitialSoundFile);
+
+  storage = storageFactory.create(director, 64);
+  x = storage;
 
 	//MIDIClient.init;
 	//mft = mftFactory.create(director);
@@ -55,3 +46,7 @@ main = {
 
 s.waitForBoot(main);
 )
+/*
+x.save();
+x.restore();
+*/

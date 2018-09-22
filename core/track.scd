@@ -3,7 +3,7 @@ parameter = "parameter.scd".loadRelative[0];
 (
 create: {
 	arg self, allSamples, trackIndex;
-	var playbackIndex, synth, feedback, initialSound;
+	var playbackIndex, synth, feedback, initialSound, synthParameters;
 
   initialSound = allSamples[trackIndex];
 
@@ -11,19 +11,22 @@ create: {
 	feedback = Bus.audio();
 	playbackIndex.set(0);
 
-	(
-		director: nil,
-		buffer: initialSound.buffer,
-    soundFile: initialSound.soundFile,
-		playbackIndex: playbackIndex,
+  synthParameters = (
 		position: parameter.create('position', trackIndex, 0, 0, 1, 0.01),
 		window: parameter.create('window', trackIndex, 1, 0, 1, 0.01),
 		rate: parameter.create('rate', trackIndex, 1, -2, 2, 0.01),
 		lpfCutoff: parameter.create('lpfCutoff', trackIndex, 1, 0, 1, 0.005),
 		hpfCutoff: parameter.create('hpfCutoff', trackIndex, 0, 0, 1, 0.005),
 		volume: parameter.create('volume', trackIndex, 0, 0, 1, 0.01),
-		theSynth: nil,
 		stop: parameter.create('stop', trackIndex, 0, 0, 1, 1),
+  );
+
+	(
+		director: nil,
+		buffer: initialSound.buffer,
+    soundFile: initialSound.soundFile,
+		playbackIndex: playbackIndex,
+		theSynth: nil,
 
 		start: {
 			arg self;
@@ -31,32 +34,32 @@ create: {
 				\feedback: feedback,
 				\buffer: self.buffer,
 				\bufFrames: self.buffer.numFrames,
-				\rate: self.rate.getValue(),
-				\window: self.window.getValue(),
-				\position: self.position.getValue,
+				\rate: synthParameters.rate.getValue(),
+				\window: synthParameters.window.getValue(),
+				\position: synthParameters.position.getValue,
 				\playhead: playbackIndex,
-				\volume: self.volume.getValue(),
-				\lpfCutoff: self.lpfCutoff.getValue(),
-				\hpfCutoff: self.hpfCutoff.getValue(),
-				\stop: self.stop.getValue(),
+				\volume: synthParameters.volume.getValue(),
+				\lpfCutoff: synthParameters.lpfCutoff.getValue(),
+				\hpfCutoff: synthParameters.hpfCutoff.getValue(),
+				\stop: synthParameters.stop.getValue(),
 			]);
 		},
 		stopSynth: {
 			arg self;
 
-			self['stop'].setValue(1);
+			synthParameters['stop'].setValue(1);
 			self.updateSynth('stop');
 		},
 		getParameter: {
 			arg self, parameter;
 
-			self[parameter].getValue();
+			synthParameters[parameter].getValue();
 		},
 		setParameter: {
 			arg self, parameter, newValue;
 			var updatedValue;
 
-			updatedValue = self[parameter].setValue(newValue);
+			updatedValue = synthParameters[parameter].setValue(newValue);
 			self.updateSynth(parameter);
 			updatedValue;
 		},
@@ -64,14 +67,14 @@ create: {
 			arg self, parameter, direction;
 			var updatedValue;
 
-			updatedValue = self[parameter].accumValue(direction);
+			updatedValue = synthParameters[parameter].accumValue(direction);
 			self.updateSynth(parameter);
 			updatedValue;
 		},
 		updateSynth: {
 			arg self, parameter;
 
-			self.theSynth.set(parameter, self[parameter].getValue());
+			self.theSynth.set(parameter, synthParameters[parameter].getValue());
 		},
     switchSample: {
       arg self, sample;
@@ -80,6 +83,13 @@ create: {
       self['soundFile'] = sample.soundFile;
 			self.theSynth.set('buffer', self['buffer']);
       self.theSynth.set('bufFrames', self['buffer'].numFrames);
+    },
+    makeMemento: {
+      arg self;
+      synthParameters.collect({
+        arg parameter;
+        parameter.getValue();
+      });
     }
 	)
 }

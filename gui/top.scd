@@ -1,12 +1,12 @@
-var addressFactory;
+var addressFactory, trackGUIFactory, waveGUIFactory;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
+trackGUIFactory = "track-controls.scd".loadRelative[0];
+waveGUIFactory = "waveformTool/waveformTool.scd".loadRelative[0];
 (
 create: {
 	|self, director, allSamples|
-	var window, trackGUIFactory, waveGUIFactory, makeTrackGUI;
+	var window, makeTrackGUI;
 	window = Window.new('Texture Synth', Rect(0,0,1300,1600)).front;
-	trackGUIFactory = "gui/track-controls.scd".loadRelative[0];
-	waveGUIFactory = "gui/waveformTool/waveformTool.scd".loadRelative[0];
 
   makeTrackGUI = {
     arg index;
@@ -24,7 +24,7 @@ create: {
     )
   };
 
-  4.collect(makeTrackGUI);
+  director.numTracks.collect(makeTrackGUI);
 }
 )
 

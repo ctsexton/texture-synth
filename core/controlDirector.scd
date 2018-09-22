@@ -26,6 +26,10 @@
 			arg self, track;
 			tracks = tracks.add(track);
 		},
+    numTracks: {
+      arg self;
+      tracks.size;
+    },
 		getBuffer: {
 			arg self, trackIndex;
 			tracks[trackIndex].buffer;
@@ -90,6 +94,25 @@
 						item.ui.receiveParameter(address, value);
 				});
 			});
-		}
+		},
+    getAllSettings: {
+      arg self;
+      tracks.collect({
+        arg track;
+        track.makeMemento();
+      });
+    },
+    restoreSettings: {
+      arg self, settings;
+      settings.do({
+        arg item, trackIndex;
+        item.keysValuesDo({
+          arg key, value;
+          var address;
+          address = (track: trackIndex, name: key);
+          self.setParameter(address, value);
+        })
+      })
+    }
 	)
 }

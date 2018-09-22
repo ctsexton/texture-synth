@@ -2,14 +2,14 @@ var addressFactory, sampleMenuFactory, waveformDisplayFactory;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 sampleMenuFactory = "sampleMenu.scd".loadRelative[0];
 waveformDisplayFactory = "waveformDisplay.scd".loadRelative[0];
+sampleMenuFactory.postln;
+waveformDisplayFactory.postln;
 
 (
 create: {
 	arg self, canvas, director, allSamples, trackIndex;
 	var waveformTool, waveformDisplay, sampleMenu, positionAddress, windowAddress, onDrag, playhead;
-
   sampleMenu = sampleMenuFactory.create(director, canvas, allSamples, trackIndex);
-
 	positionAddress = addressFactory.create(trackIndex, 'position');
 	windowAddress = addressFactory.create(trackIndex, 'window');
   onDrag = {

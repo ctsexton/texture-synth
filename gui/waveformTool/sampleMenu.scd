@@ -5,7 +5,6 @@ addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
   create: {
     arg self, director, parentView, allSamples, trackIndex;
     var itemAction, items, sampleAddress;
-
 	  sampleAddress = addressFactory.create(trackIndex, 'soundFile');
 
     items = allSamples.collect({
