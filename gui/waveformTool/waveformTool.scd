@@ -2,8 +2,6 @@ var addressFactory, sampleMenuFactory, waveformDisplayFactory;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 sampleMenuFactory = "sampleMenu.scd".loadRelative[0];
 waveformDisplayFactory = "waveformDisplay.scd".loadRelative[0];
-sampleMenuFactory.postln;
-waveformDisplayFactory.postln;
 
 (
 create: {

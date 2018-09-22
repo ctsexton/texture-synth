@@ -1,15 +1,16 @@
 (
-var main, sampleLoader, trackFactory, addressFactory, guiFactory, director, mftFactory, storageFactory;
+var main, sampleLoader, trackFactory, addressFactory, guiFactory, director, mftFactory, storageFactory, launchpadFactory;
 ~global_APP_DIRECTORY = thisProcess.nowExecutingPath.dirname.asString;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 director = "core/controlDirector.scd".loadRelative[0].value();
 guiFactory = "gui/top.scd".loadRelative[0];
 trackFactory = "core/track.scd".loadRelative[0];
 mftFactory = "midi/mft.scd".loadRelative[0];
+launchpadFactory = "midi/launchpad.scd".loadRelative[0];
 storageFactory = "core/storage.scd".loadRelative[0];
 sampleLoader = "core/sampleLoader.scd".loadRelative[0];
 main = {
-	var samples, tracks, mft, setInitialSoundFile, allTrackGUIs, storage;
+	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage;
 
 	"core/synthdefs.scd".loadRelative[0].add;
 
@@ -26,7 +27,6 @@ main = {
   setInitialSoundFile = {
     arg trackGUI, index;
     var soundFile, address;
-    addressFactory.postln;
     address = addressFactory.create(index, 'soundFile');
     soundFile = samples[index];
     trackGUI.waveformGUI.receiveParameter(address, soundFile);
@@ -39,9 +39,10 @@ main = {
   storage = storageFactory.create(director, 64);
   x = storage;
 
-	//MIDIClient.init;
-	//mft = mftFactory.create(director);
+	MIDIClient.init;
+	mft = mftFactory.create(director);
 	// "Done";
+  launchpad = launchpadFactory.create(director);
 };
 
 s.waitForBoot(main);
