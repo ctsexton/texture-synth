@@ -37,17 +37,11 @@ main = {
   allTrackGUIs.do(setInitialSoundFile);
 
   storage = storageFactory.create(director, 64);
-  x = storage;
 
 	MIDIClient.init;
 	mft = mftFactory.create(director);
-	// "Done";
-  launchpad = launchpadFactory.create(director);
+  launchpad = launchpadFactory.create(storage);
 };
 
 s.waitForBoot(main);
 )
-/*
-x.save();
-x.restore();
-*/

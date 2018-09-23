@@ -14,7 +14,13 @@
       },
       restore: {
         arg self, index;
-        director.restoreSettings(storage[index]);
+        var memory;
+        memory = storage[index];
+        if (memory == nil,
+          { false },
+          {director.restoreSettings(memory); true };
+        )
+        
       }
     )
 

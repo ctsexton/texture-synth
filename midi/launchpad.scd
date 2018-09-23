@@ -3,23 +3,61 @@ translatorMaker = "translator.scd".loadRelative[0];
 rangeFactory = "encToRange.scd".loadRelative[0];
 
 midi_to_grid = translatorMaker.newMIDItoGRID(16);
-grid_to_midi = translatorMaker.newGRIDtoMIDI(16);
+grid_to_midi = translatorMaker.newGRIDtoMIDI(8);
 (
   create: {
-    arg self, director;
-    var port, connection, onPush;
+    arg self, storage;
+    var port, onPush, output, toLP, shift, previousNote, selectToSave, selectToRecall, outputLogic;
     
     port = MIDIIn.findPort("Launchpad Mini", "Launchpad Mini MIDI 1");
-    connection = MIDIIn.connect(0, port);
+    MIDIIn.connect(0, port);
+
+    output = MIDIOut.newByName("Launchpad Mini", "Launchpad Mini MIDI 1");
+    output.latency = 0;
+
+    shift = false;
+    previousNote = 127;
+
+    toLP = {
+      arg noteNum, velocity;
+      output.noteOn(0, noteNum, velocity);
+    };
+
+    selectToSave = {
+      arg index, noteNum;
+      storage.save(index);
+      toLP.value(previousNote, 127);
+      toLP.value(noteNum, 3); 
+      previousNote = noteNum;
+    };
+    selectToRecall = {
+      arg index, noteNum;
+      if (storage.restore(index),
+        { toLP.value(previousNote, 127); toLP.value(noteNum, 48); previousNote = noteNum }
+      )
+    };
+
+    outputLogic = {
+      arg index, noteNum;
+      switch (shift)
+        {true} {selectToSave.value(index, noteNum)}
+        {false} {selectToRecall.value(index, noteNum)};
+    };
+
+    MIDIdef.new(\shift, {
+      |velocity, ccNumber, channel, uid|
+      shift = velocity != 0;
+    }, 104, msgType: \control, srcID: port.uid);
 
     onPush = {
-      arg self;
-      MIDIdef.new(\launchpad_in, {
-        |noteNumber, velocity, channel|
-        var gridMsg;
-        gridMsg = midi_to_grid.value(velocity, noteNumber);
-        gridMsg.postln;
-      }, msgType: \noteOn, srcID: port.uid)
+      MIDIdef.noteOn(\launchpad_in, {
+        |velocity, noteNumber, channel|
+        var gridMsg, index;
+        gridMsg = midi_to_grid.value(noteNumber, velocity);
+        index = grid_to_midi.value(gridMsg[0], gridMsg[1]);
+        outputLogic.value(index, noteNumber);
+        
+      }, nil, nil, srcID: port.uid)
     };
 
     onPush.value();

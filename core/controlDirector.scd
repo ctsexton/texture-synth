@@ -1,9 +1,14 @@
 {
-	var userInterfaces, tracks, subscriptionFactory;
+	var userInterfaces, tracks, subscriptionFactory, storage;
 	userInterfaces = [];
 	tracks = [];
+  storage = nil;
 
 	(
+    registerStorage: {
+      arg self, newStorage;
+      storage = newStorage;
+    },
 		registerUI: {
 			arg self, userInterface, subscriptionsToAdd;
 			var uiModel, subscriptions;
