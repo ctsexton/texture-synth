@@ -1,3 +1,20 @@
+var interpolateValues, interpolateMementos;
+interpolateValues = {
+  arg fromValue, toValue, interpolation;
+  fromValue.isNumber.postln;
+  fromValue.postln;
+  if (fromValue.isNumber,
+    {(fromValue * (1 - interpolation) + (toValue * interpolation))},
+    {if (interpolation < 0.5, fromValue, toValue)}
+  );
+};
+interpolateMementos = {
+  arg fromMem, toMem, interpolation;
+  fromMem.collect({
+    arg track, trackIndex;
+    track.collect({|item, i| interpolateValues.value(item, toMem[trackIndex][i], interpolation)})
+  });
+};
 (
   create: {
     arg self, director, size;
@@ -23,10 +40,10 @@
       },
       interpolate: {
         arg self, fromIndex, toIndex, interpolation;
-        if (fromIndex.isNumber,
-          {(fromIndex * (1 - interpolation) + (toIndex * interpolation))},
-          {if (interpolation > 0.5, fromIndex, toIndex)}
-        );
+        var result;
+        result = interpolateMementos.value(storage[fromIndex], storage[toIndex], interpolation);
+        director.restoreSettings(result);
+        true;
       }
     )
 
