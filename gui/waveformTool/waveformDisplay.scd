@@ -1,7 +1,8 @@
 (
   create: {
     arg self, canvas, bounds, onDrag, playhead;
-    var wave, updateTimeCursor, timeCursorAnimation;
+    var wave, updateTimeCursor, timeCursorAnimation, position, window, updatePosition, updateWindow;
+
 
     wave = SoundFileView.new(canvas, bounds);
     wave.gridOn = false;
@@ -15,6 +16,11 @@
       window = couple[1] / frames;
       onDrag.value(position, window);
     };
+
+    position = 0;
+    window = 1;
+    updatePosition = { {wave.setSelectionStart(0, position * wave.numFrames)}.defer };
+    updateWindow = {{wave.setSelectionSize(0, window * wave.numFrames)}.defer;};
 
     updateTimeCursor = { 
       playhead.get(
@@ -31,15 +37,19 @@
           wave.soundfile = newSoundFile;
           wave.read(0, newSoundFile.numFrames);
           wave.refresh;
+          updatePosition.value();
+          updateWindow.value();
         }.defer;
       },
       setPosition: {
-        arg self, positionValue;
-        {wave.setSelectionStart(0, positionValue * wave.numFrames)}.defer;
+        arg self, newValue;
+        position = newValue;
+        updatePosition.value();
       },
       setWindow: {
-        arg self, windowValue;
-        {wave.setSelectionSize(0, windowValue * wave.numFrames)}.defer;
+        arg self, newValue;
+        window = newValue;
+        updateWindow.value();
       },
       startPlayhead: {
         timeCursorAnimation.play;

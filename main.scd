@@ -27,7 +27,7 @@ main = {
   setInitialSoundFile = {
     arg trackGUI, index;
     var soundFile, address;
-    address = addressFactory.create(index, 'soundFile');
+    address = addressFactory.create(index, 'sample');
     soundFile = samples[index];
     trackGUI.waveformGUI.receiveParameter(address, soundFile);
   };
@@ -37,10 +37,12 @@ main = {
   allTrackGUIs.do(setInitialSoundFile);
 
   storage = storageFactory.create(director, 64);
-
+  x = storage;
+/*
 	MIDIClient.init;
 	mft = mftFactory.create(director);
   launchpad = launchpadFactory.create(storage);
+*/
 };
 
 s.waitForBoot(main);

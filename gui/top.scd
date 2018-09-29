@@ -16,7 +16,7 @@ create: {
     trackControls = trackGUIFactory.create(CompositeView.new(trackView, Rect(0, 0, 1300, 200)), director, index);
 	  waveformGUI = waveGUIFactory.create(CompositeView.new(trackView, Rect(1300, 0, 600, 200)), director, allSamples, index);
 	  director.registerUI(trackControls, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
-	  director.registerUI(waveformGUI, [\position, \window, \soundFile, \status]);
+	  director.registerUI(waveformGUI, [\position, \window, \sample, \status]);
 
     (
       waveformGUI: waveformGUI,

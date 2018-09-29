@@ -3,14 +3,15 @@
     arg self, path, server;
     var buffer, soundFile, frames;
 
-    buffer = Buffer.read(server, path);
-    frames = buffer.numFrames;
     soundFile = SoundFile.new;
-    soundFile.openRead(path.asString);
+    soundFile.openRead(path.fullPath.asString);
+    buffer = soundFile.asBuffer();
+    frames = buffer.numFrames;
     (
       buffer: buffer,
       soundFile: soundFile,
-      frames: frames
+      frames: frames,
+      name: path.fileNameWithoutExtension
     )
   }
 )

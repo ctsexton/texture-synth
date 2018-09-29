@@ -3,7 +3,7 @@ parameter = "parameter.scd".loadRelative[0];
 (
 create: {
 	arg self, allSamples, trackIndex;
-	var playbackIndex, synth, feedback, initialSound, synthParameters;
+	var playbackIndex, synth, feedback, initialSound, parameters;
 
   initialSound = allSamples[trackIndex];
 
@@ -11,20 +11,18 @@ create: {
 	feedback = Bus.audio();
 	playbackIndex.set(0);
 
-  synthParameters = (
-		position: parameter.create('position', trackIndex, 0, 0, 1, 0.01),
-		window: parameter.create('window', trackIndex, 1, 0, 1, 0.01),
-		rate: parameter.create('rate', trackIndex, 1, -2, 2, 0.01),
-		lpfCutoff: parameter.create('lpfCutoff', trackIndex, 1, 0, 1, 0.005),
-		hpfCutoff: parameter.create('hpfCutoff', trackIndex, 0, 0, 1, 0.005),
-		volume: parameter.create('volume', trackIndex, 0, 0, 1, 0.01),
-		stop: parameter.create('stop', trackIndex, 0, 0, 1, 1),
+  parameters = (
+		position: parameter.create('position', 0, 0, 1, 0.01),
+		window: parameter.create('window', 1, 0, 1, 0.01),
+		rate: parameter.create('rate', 1, -2, 2, 0.01),
+		lpfCutoff: parameter.create('lpfCutoff', 1, 0, 1, 0.005),
+		hpfCutoff: parameter.create('hpfCutoff', 0, 0, 1, 0.005),
+		volume: parameter.create('volume', 0, 0, 1, 0.01),
+    sample: parameter.create('sample', initialSound, nil, nil, nil, { |newV| newV }, { |sample| sample.buffer })
   );
 
 	(
 		director: nil,
-		buffer: initialSound.buffer,
-    soundFile: initialSound.soundFile,
 		playbackIndex: playbackIndex,
 		theSynth: nil,
 
@@ -32,61 +30,50 @@ create: {
 			arg self;
 			self.theSynth = Synth.new(\windowLooper, [
 				\feedback: feedback,
-				\buffer: self.buffer,
-				\bufFrames: self.buffer.numFrames,
-				\rate: synthParameters.rate.getValue(),
-				\window: synthParameters.window.getValue(),
-				\position: synthParameters.position.getValue,
+				\sample: parameters.sample.getValueForSynth(),
+				\rate: parameters.rate.getValueForSynth(),
+				\window: parameters.window.getValueForSynth(),
+				\position: parameters.position.getValueForSynth,
 				\playhead: playbackIndex,
-				\volume: synthParameters.volume.getValue(),
-				\lpfCutoff: synthParameters.lpfCutoff.getValue(),
-				\hpfCutoff: synthParameters.hpfCutoff.getValue(),
-				\stop: synthParameters.stop.getValue(),
+				\volume: parameters.volume.getValueForSynth(),
+				\lpfCutoff: parameters.lpfCutoff.getValueForSynth(),
+				\hpfCutoff: parameters.hpfCutoff.getValueForSynth(),
+        \status: 0
 			]);
 		},
 		stopSynth: {
 			arg self;
 
-			synthParameters['stop'].setValue(1);
-			self.updateSynth('stop');
+      self.theSynth.set('status', 1);
 		},
 		getParameter: {
 			arg self, parameter;
 
-			synthParameters[parameter].getValue();
+			parameters[parameter].getValue();
 		},
 		setParameter: {
-			arg self, parameter, newValue;
+			arg self, parameter, newVal;
 			var updatedValue;
 
-			updatedValue = synthParameters[parameter].setValue(newValue);
-			self.updateSynth(parameter);
+			updatedValue = parameters[parameter].change(newVal);
+      self.updateSynth(parameter);
 			updatedValue;
 		},
 		accumParameter: {
 			arg self, parameter, direction;
 			var updatedValue;
 
-			updatedValue = synthParameters[parameter].accumValue(direction);
+			updatedValue = parameters[parameter].accum(direction);
 			self.updateSynth(parameter);
 			updatedValue;
 		},
 		updateSynth: {
 			arg self, parameter;
-
-			self.theSynth.set(parameter, synthParameters[parameter].getValue());
+			self.theSynth.set(parameter, parameters[parameter].getValueForSynth());
 		},
-    switchSample: {
-      arg self, sample;
-
-      self['buffer'] = sample.buffer;
-      self['soundFile'] = sample.soundFile;
-			self.theSynth.set('buffer', self['buffer']);
-      self.theSynth.set('bufFrames', self['buffer'].numFrames);
-    },
     makeMemento: {
       arg self;
-      synthParameters.collect({
+      parameters.collect({
         arg parameter;
         parameter.getValue();
       });

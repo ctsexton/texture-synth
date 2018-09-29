@@ -20,7 +20,13 @@
           { false },
           {director.restoreSettings(memory); true };
         )
-        
+      },
+      interpolate: {
+        arg self, fromIndex, toIndex, interpolation;
+        if (fromIndex.isNumber,
+          {(fromIndex * (1 - interpolation) + (toIndex * interpolation))},
+          {if (interpolation > 0.5, fromIndex, toIndex)}
+        );
       }
     )
 
