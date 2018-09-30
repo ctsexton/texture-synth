@@ -15,7 +15,7 @@ main = {
 	"core/synthdefs.scd".loadRelative[0].add;
 
   samples = sampleLoader.create(sampleLoader.getRelativeFolderPath('samples'));
-  tracks = 4.collect({
+  tracks = 3.collect({
     arg index;
     var track;
 
@@ -36,13 +36,12 @@ main = {
 	allTrackGUIs = guiFactory.create(director, samples);
   allTrackGUIs.do(setInitialSoundFile);
 
-  storage = storageFactory.create(director, 64);
+  storage = storageFactory.create(director, 65);
   x = storage;
-/*
+
 	MIDIClient.init;
-	mft = mftFactory.create(director);
+	mft = mftFactory.create(director, storage);
   launchpad = launchpadFactory.create(storage);
-*/
 };
 
 s.waitForBoot(main);

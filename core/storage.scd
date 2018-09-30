@@ -1,4 +1,8 @@
-var interpolateValues, interpolateMementos, cubicWarp, transition;
+var interpolateValues, interpolateMementos, cubicWarp, transition, interpolationTime, parameter, previousRoutine;
+parameter = "parameter.scd".loadRelative[0];
+previousRoutine = Routine({});
+
+interpolationTime = parameter.create('interpolationTime', 0, 0, 5, 0.05);
 
 cubicWarp = {
 	arg input;
@@ -11,8 +15,6 @@ cubicWarp = {
 
 interpolateValues = {
   arg fromValue, toValue, interpolation;
-  fromValue.isNumber.postln;
-  fromValue.postln;
   if (fromValue.isNumber,
     {(fromValue * (1 - interpolation) + (toValue * interpolation))},
     {if (interpolation < 0.5, fromValue, toValue)}
@@ -30,16 +32,19 @@ interpolateMementos = {
 (
   create: {
     arg self, director, size;
-    var storage;
+    var storage, verify;
     
     storage = Array.newClear(size);
+    verify = {
+      arg index;
+      var memory = storage[index];
+      if (memory != nil, { [true, memory] }, { [false, nil] });
+    };
 
     (
       save: {
         arg self, index;
-        var currentSettings;
-        currentSettings = director.getAllSettings();
-        storage.put(index, currentSettings);
+        storage.put(index, director.getAllSettings());
       },
       restore: {
         arg self, index;
@@ -59,13 +64,41 @@ interpolateMementos = {
       },
       transition: {
         arg self, from, to;
-        Routine({
-          100.do({
-            |i|
-            self.interpolate(from, to, cubicWarp.value(i / 100 + (1 / 100)));
-            0.05.wait;
-          })
-        }).reset.play;
+        var steps = interpolationTime.getValue() / 0.05;
+        if (steps == 0, 
+          {self.restore(to)}, 
+          {
+            previousRoutine.stop;
+            previousRoutine = Routine({
+              steps.do({
+                |i|
+                self.interpolate(from, to, cubicWarp.value(i / steps + (1 / steps)));
+                0.05.wait;
+              })
+            }).play;
+          });
+      },
+      transitionTo: {
+        arg self, to;
+        var result;
+        result = verify.value(to);
+        if (result[0] == true, 
+          {
+            self.save(0);
+            self.transition(0, to);
+            true;
+          }, 
+          { false }
+        );
+      },
+      setInterpolationTime: {
+        arg self, newDuration;
+        interpolationTime = newDuration;
+      },
+      accumInterpolationTime: {
+        arg self, accum;
+        interpolationTime.accum(accum);
+        interpolationTime.getValue.postln;
       }
     )
 

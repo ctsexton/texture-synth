@@ -25,7 +25,7 @@ for (0, 3, { |trk|
 
 (
 create: {
-	arg self, director;
+	arg self, director, storage;
 	var mft, mftActionLevelOne, mftActionLevelTwo, port, connection;
 
 	mftActionLevelOne = {
@@ -59,9 +59,15 @@ create: {
 					0, { mftActionLevelOne.value(gridMsg) },
 					4, { mftActionLevelTwo.value(gridMsg); }
 				);
-			}, msgType: \control, srcID: port.uid);
+			}, msgNum: (0..11), msgType: \control, srcID: port.uid);
 		}
 	);
+
+  MIDIdef.new(\master_ctrls, {
+    |noteNumber, velocity, channel|
+    var gridMsg = midi_to_grid.value(velocity, noteNumber);
+    storage.accumInterpolationTime(gridMsg[2]);
+  }, msgNum: 12, msgType: \control, srcID: port.uid);
 
 	mft.addAction();
 
