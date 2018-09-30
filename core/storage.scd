@@ -1,4 +1,14 @@
-var interpolateValues, interpolateMementos;
+var interpolateValues, interpolateMementos, cubicWarp, transition;
+
+cubicWarp = {
+	arg input;
+	var output;
+	output = case 
+	{ input < 0.5 } {input**3 * 4}
+	{ 0.5 * ((2 * input - 2)**3) + 1 };
+	output;
+};
+
 interpolateValues = {
   arg fromValue, toValue, interpolation;
   fromValue.isNumber.postln;
@@ -8,6 +18,7 @@ interpolateValues = {
     {if (interpolation < 0.5, fromValue, toValue)}
   );
 };
+
 interpolateMementos = {
   arg fromMem, toMem, interpolation;
   fromMem.collect({
@@ -15,6 +26,7 @@ interpolateMementos = {
     track.collect({|item, i| interpolateValues.value(item, toMem[trackIndex][i], interpolation)})
   });
 };
+
 (
   create: {
     arg self, director, size;
@@ -44,6 +56,16 @@ interpolateMementos = {
         result = interpolateMementos.value(storage[fromIndex], storage[toIndex], interpolation);
         director.restoreSettings(result);
         true;
+      },
+      transition: {
+        arg self, from, to;
+        Routine({
+          100.do({
+            |i|
+            self.interpolate(from, to, cubicWarp.value(i / 100 + (1 / 100)));
+            0.05.wait;
+          })
+        }).reset.play;
       }
     )
 

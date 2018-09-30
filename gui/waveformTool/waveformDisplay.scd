@@ -33,13 +33,13 @@
     (
       updateSoundFile: {
         arg self, newSoundFile;
-        {
+        if (wave.soundfile != newSoundFile, {{
           wave.soundfile = newSoundFile;
           wave.read(0, newSoundFile.numFrames);
           wave.refresh;
           updatePosition.value();
           updateWindow.value();
-        }.defer;
+        }.defer});
       },
       setPosition: {
         arg self, newValue;
