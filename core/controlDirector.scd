@@ -1,8 +1,9 @@
 {
-	var userInterfaces, tracks, subscriptionFactory, storage;
+	var userInterfaces, tracks, subscriptionFactory, storage, tracks_enabled;
 	userInterfaces = [];
 	tracks = [];
   storage = nil;
+  tracks_enabled = [];
 
 	(
     registerStorage: {
@@ -30,6 +31,7 @@
 		addTrack: {
 			arg self, track;
 			tracks = tracks.add(track);
+      tracks_enabled = tracks_enabled.add(true);
 		},
     numTracks: {
       arg self;
@@ -101,10 +103,17 @@
         item.keysValuesDo({
           arg key, value;
           var address;
-          address = (track: trackIndex, name: key);
-          self.setParameter(address, value);
+          if (tracks_enabled[trackIndex] == true, {
+            address = (track: trackIndex, name: key);
+            self.setParameter(address, value);
+          })
         })
       })
+    },
+    toggleTrack: {
+      arg self, track;
+      tracks_enabled[track] = tracks_enabled[track].not;
+      tracks_enabled[track];
     }
 	)
 }

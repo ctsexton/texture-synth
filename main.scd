@@ -41,7 +41,7 @@ main = {
 
 	MIDIClient.init;
 	mft = mftFactory.create(director, storage);
-  launchpad = launchpadFactory.create(storage);
+  launchpad = launchpadFactory.create(storage, director);
 };
 
 s.waitForBoot(main);
