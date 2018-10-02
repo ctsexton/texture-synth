@@ -10,7 +10,7 @@ launchpadFactory = "midi/launchpad.scd".loadRelative[0];
 storageFactory = "core/storage.scd".loadRelative[0];
 sampleLoader = "core/sampleLoader.scd".loadRelative[0];
 main = {
-	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage;
+	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage, params;
 
 	"core/synthdefs.scd".loadRelative[0].add;
 
@@ -41,7 +41,18 @@ main = {
 
 	MIDIClient.init;
 	mft = mftFactory.create(director, storage);
+	director.registerUI(mft, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
   launchpad = launchpadFactory.create(storage, director);
+
+  params = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
+  3.do({
+    arg track;
+    params.do({
+      arg parameter;
+      var address = (track: track, name: parameter);
+      director.resetParameter(address);
+    })
+  })
 };
 
 s.waitForBoot(main);

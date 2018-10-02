@@ -3,7 +3,6 @@
  - MFT LED feedback
  - Master knobs - interpolate time/manual^1, reverb input, filters, master vol/distortion
  - track volume - click to play^2
- - track volume & master volume - exponential warp
  - DIY ramp & switch in SynthDef
  - save memories !IMPORTANT
 

@@ -1,4 +1,4 @@
-var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, levelOneParams, levelTwoParams, clickParams, addressesA, addressesB, addressesC, addressFactory, timerFactory;
+var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, levelOneParams, levelTwoParams, clickParams, addressesA, addressesB, addressesC, addressFactory, timerFactory, params_to_controller;
 translatorMaker = "translator.scd".loadRelative[0];
 rangeFactory = "encToRange.scd".loadRelative[0];
 addressFactory = "../core/address.scd".loadRelative[0];
@@ -27,11 +27,19 @@ for (0, 3, { |trk|
 	})
 });
 
+params_to_controller = (
+  \position: (level: [0], col: 0, scale: \default),
+  \window: (level: [1], col: 0, scale: \default),
+  \rate: (level: [0, 1], col: 1, scale: [-2, 2, 0, 127]),
+  \lpfCutoff: (level: [0], col: 2, scale: \default),
+  \hpfCutoff: (level: [1], col: 2, scale: \default),
+  \volume: (level: [0, 1], col: 3, scale: \default)
+);
 
 (
   create: {
     arg self, director, storage;
-    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset;
+    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset, output;
 
     mftActionLevelOne = {
       arg knobInput;
@@ -68,6 +76,8 @@ for (0, 3, { |trk|
 
     port = MIDIIn.findPort("Midi Fighter Twister", "Midi Fighter Twister MIDI 1");
     connection = MIDIIn.connect(0, port);
+    output = MIDIOut.newByName("Midi Fighter Twister", "Midi Fighter Twister MIDI 1");
+    output.latency = 0;
 
     MIDIdef.new(\mft_in, {
       |velocity, noteNumber, channel|
@@ -100,6 +110,22 @@ for (0, 3, { |trk|
       connection: connection,
       receiveParameter: {
         arg self, address, value;
+        var parameter, mapping;
+
+        parameter = address['name'];
+        mapping = params_to_controller[parameter];
+        mapping.level.do({
+          arg i;
+          var noteNum, channel, velocity, scale;
+          scale = mapping.scale;
+          if (scale == \default, 
+            {velocity = (value * 127).asInteger},
+            {velocity = value.linlin(scale[0], scale[1], scale[2], scale[3]).asInteger}
+          );
+          noteNum = grid_to_midi.value(mapping.col, address['track']);
+          channel = i * 4;
+          output.control(channel, noteNum, velocity);
+        })
       }
     )
   }
