@@ -46,7 +46,7 @@ for (0, 3, { |trk|
       director.accumParameter(address, knobInput[2]);
     };
     
-    reverseTimers = Array.fill(3, {timerFactory.create(1)});
+    reverseTimers = Array.fill(3, {timerFactory.create(0.25)});
     rateDoubleClick = {
       arg track;
       switch (reverseTimers[track].getStatus, 
@@ -55,14 +55,14 @@ for (0, 3, { |trk|
         {}
       )
     };
-    resetTimers = Array.fill(3, {timerFactory.create(1)});
+    resetTimers = Array.fill(3, {timerFactory.create(0.3)});
     rateReset = {
       arg track, trigger;
       switch (trigger,
         true, { resetTimers[track].open() },
         false, {
           resetTimers[track].fireIfClosed({director.resetParameter(addressesC[track][1])})
-        }
+        }, {}
       )
     };
 

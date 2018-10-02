@@ -63,6 +63,7 @@ create: {
       arg self, parameter;
       var updatedValue;
       updatedValue = parameters[parameter].resetValue();
+      self.updateSynth(parameter);
       updatedValue;
     },
 		accumParameter: {
