@@ -1,3 +1,4 @@
+var amplitudeWarp = \db.asWarp;
 SynthDef(\windowLooper, {
 	arg sample, rate = 1, window, position, playhead, volume, feedback, lpfCutoff, hpfCutoff, status;
 	var out, index, resetPoint, isOutsideBounds, maxWindowSize, outsideBoundsTrigger, lowerBound, upperBound;
@@ -14,8 +15,8 @@ SynthDef(\windowLooper, {
 	Out.ar(feedback, isOutsideBounds);
 	Out.kr(playhead, index * BufFrames.kr(sample));
 
-	out = BufRd.ar(1, sample, index * BufFrames.kr(sample), 1, 4) * volume;
-	out = HPF.ar(RLPF.ar(out, lpfCutoff.linexp(0, 1, 50, 10000), 1), hpfCutoff.lincurve(0, 1, 10, 2500, -2));
+	out = BufRd.ar(1, sample, index * BufFrames.kr(sample), 1, 4) * amplitudeWarp.map(volume.varlag(0.005));
+	out = HPF.ar(RLPF.ar(out, lpfCutoff.varlag(0.01).lincurve(0, 1, 20, 10000, 2.5), 1), hpfCutoff.varlag(0.05).lincurve(0, 1, 30, 2500, 2));
 
 	Out.ar(0, out!4);
 	FreeSelf.kr(status);
