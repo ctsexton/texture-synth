@@ -39,7 +39,8 @@ create: {
       arg self, newValue;
       value = changeFunction.value(newValue);
       value;
-    }
+    },
+    resetValue: { value = changeFunction.value(init); value; }
 	)
 }
 )

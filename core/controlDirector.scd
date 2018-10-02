@@ -67,6 +67,18 @@
 			updatedValue = track.accumParameter(parameter, accum);
 			self.updateAllUIs(address, updatedValue);
 		},
+    reverseParameter: {
+      arg self, address;
+      var current, updatedValue;
+      current = self.getParameter(address);
+      self.setParameter(address, current * -1);
+    },
+    resetParameter: {
+      arg self, address;
+      var updatedValue;
+      updatedValue = tracks[address['track']].resetParam(address['name']);
+			self.updateAllUIs(address, updatedValue);
+    },
 		togglePlayback: {
 			arg self, address, value;
       var trackIndex;

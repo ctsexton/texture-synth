@@ -59,6 +59,12 @@ create: {
       self.updateSynth(parameter);
 			updatedValue;
 		},
+    resetParam: {
+      arg self, parameter;
+      var updatedValue;
+      updatedValue = parameters[parameter].resetValue();
+      updatedValue;
+    },
 		accumParameter: {
 			arg self, parameter, direction;
 			var updatedValue;
