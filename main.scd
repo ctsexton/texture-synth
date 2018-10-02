@@ -1,20 +1,25 @@
 (
-var main, sampleLoader, trackFactory, addressFactory, guiFactory, director, mftFactory, storageFactory, launchpadFactory;
+var main, sampleLoader, trackFactory, masterTrackFactory, addressFactory, guiFactory, director, masterDirector, mftFactory, storageFactory, launchpadFactory;
 ~global_APP_DIRECTORY = thisProcess.nowExecutingPath.dirname.asString;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 director = "core/controlDirector.scd".loadRelative[0].value();
+masterDirector = "core/controlDirector.scd".loadRelative[0].value();
 guiFactory = "gui/top.scd".loadRelative[0];
 trackFactory = "core/track.scd".loadRelative[0];
+masterTrackFactory = "core/masterTrack.scd".loadRelative[0];
 mftFactory = "midi/mft.scd".loadRelative[0];
 launchpadFactory = "midi/launchpad.scd".loadRelative[0];
 storageFactory = "core/storage.scd".loadRelative[0];
 sampleLoader = "core/sampleLoader.scd".loadRelative[0];
 main = {
-	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage, params;
+	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage, params, masterTrack, masterBus;
 
 	"core/synthdefs.scd".loadRelative[0].add;
+	"core/masterChannel.scd".loadRelative[0].add;
 
+  0.5.wait;
   samples = sampleLoader.create(sampleLoader.getRelativeFolderPath('samples'));
+  masterBus = Bus.audio();
   tracks = 3.collect({
     arg index;
     var track;
@@ -23,6 +28,9 @@ main = {
 		director.addTrack(track);
 		track;
   });
+
+  masterTrack = masterTrackFactory.create(masterBus);
+  masterDirector.addTrack(masterTrack);
 
   setInitialSoundFile = {
     arg trackGUI, index;
@@ -33,12 +41,12 @@ main = {
   };
 
   QtGUI.palette = QPalette.dark;
-	allTrackGUIs = guiFactory.create(director, samples);
+	allTrackGUIs = guiFactory.create(director, samples, masterDirector);
   allTrackGUIs.do(setInitialSoundFile);
 
   storage = storageFactory.create(director, 65);
   x = storage;
-
+/*
 	MIDIClient.init;
 	mft = mftFactory.create(director, storage);
 	director.registerUI(mft, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
@@ -53,6 +61,7 @@ main = {
       director.resetParameter(address);
     })
   })
+*/
 };
 
 s.waitForBoot(main);

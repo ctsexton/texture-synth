@@ -16,7 +16,7 @@ create: {
     director.setParameter(windowAddress, window);
   };
   playhead = director.getPlaybackIndex(trackIndex); 
-  waveformDisplay = waveformDisplayFactory.create(canvas, Rect(0, 20, 600, 178), onDrag, playhead);
+  waveformDisplay = waveformDisplayFactory.create(canvas, Rect(0, 20, 1000, 178), onDrag, playhead);
 
 	waveformTool = (
 		receiveParameter: {

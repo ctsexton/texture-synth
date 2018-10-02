@@ -11,6 +11,6 @@ addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
       arg item, i;
       allSamples[i].name -> {director.setParameter(sampleAddress, allSamples[i])};
     });
-    EZPopUpMenu.new(parentView, Rect(0, 0, 600, 22), nil, items, initVal: trackIndex);
+    EZPopUpMenu.new(parentView, Rect(0, 0, 1000, 22), nil, items, initVal: trackIndex);
   }
 )

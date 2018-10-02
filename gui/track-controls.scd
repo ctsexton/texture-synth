@@ -4,64 +4,53 @@ addressFactory = "../core/address.scd".loadRelative[0];
 (
 create: {
 	arg self, canvas, director, trackIndex;
-	var startStop, knobSettings, knobs, addresses, specs;
+	var startStop, knobSettings, knobs, addresses, specs, parameters;
 
-	specs = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume, \status];
+	parameters = [\rate, \lpfCutoff, \hpfCutoff, \volume, \status];
 
-  addresses = specs.collect({ |item| addressFactory.create(trackIndex, item); });
+  specs = ();
+  parameters.do({
+    arg param;
+    specs[param] = addressFactory.create(trackIndex, param)
+  });
+
 	startStop = Button.new(canvas, Rect(0, 0, 100, 200));
-
 	startStop.states = [["Start", Color.white, Color.black], ["Stop", Color.black, Color.white]];
-
 	startStop.action = {
 		arg button;
-		director.togglePlayback(addresses[6], button.value);
+		director.togglePlayback(specs.status, button.value);
 	};
 
-	knobSettings = [
-		(
-			label: \Position,
+	knobSettings = (
+		rate: (
+			label: \Rate,
 			x: 0,
-			controlSpec: ControlSpec.new(0.001, 0.999),
-			onChange: {|self, val| director.setParameter(addresses[0], val.value)},
+			controlSpec: ControlSpec.new(-2, 2),
+			onChange: {|self, val| director.setParameter(specs['rate'], val.value)},
+			initVal: 1
+		),
+		lpfCutoff: (
+			label: \LPF,
+			x: 200,
+			controlSpec: ControlSpec.new(0, 1),
+			onChange: {|self, val| director.setParameter(specs['lpfCutoff'], val.value)},
+			initVal: 1
+		),
+		hpfCutoff: (
+			label: \HPF,
+			x: 400,
+			controlSpec: ControlSpec.new(0, 1),
+			onChange: {|self, val| director.setParameter(specs['hpfCutoff'], val.value)},
 			initVal: 0
 		),
-		(
-			label: \Window,
-			x: 200,
-			controlSpec: ControlSpec.new(0.001, 0.999),
-			onChange: {|self, val| director.setParameter(addresses[1], val.value)},
-			initVal: 1
-		),
-		(
-			label: \Rate,
-			x: 400,
-			controlSpec: ControlSpec.new(-2, 2),
-			onChange: {|self, val| director.setParameter(addresses[2], val.value)},
-			initVal: 1
-		),
-		(
-			label: \LPF,
+		volume: (
+			label: \Volume,
 			x: 600,
 			controlSpec: ControlSpec.new(0, 1),
-			onChange: {|self, val| director.setParameter(addresses[3], val.value)},
-			initVal: 1
-		),
-		(
-			label: \HPF,
-			x: 800,
-			controlSpec: ControlSpec.new(0, 1),
-			onChange: {|self, val| director.setParameter(addresses[4], val.value)},
+			onChange: {|self, val| director.setParameter(specs['volume'], val.value)},
 			initVal: 0
-		),
-		(
-			label: \Volume,
-			x: 1000,
-			controlSpec: ControlSpec.new(0, 1),
-			onChange: {|self, val| director.setParameter(addresses[5], val.value)},
-			initVal: 0
-		),
-	];
+		)
+  );
 	knobs = knobSettings.collect({
 		arg knob;
 		var ezKnob;
@@ -76,12 +65,11 @@ create: {
 		knobs: knobs,
 		receiveParameter: {
 			arg self, address, value;
-			var specs, parameter;
-			specs = (\position: 0, \window: 1, \rate: 2, \lpfCutoff: 3, \hpfCutoff: 4, \volume: 5);
+			var parameter;
 
 			if (address['track'] == trackIndex, {
 				parameter = address['name'];
-				{knobs[specs[parameter]].value = value}.defer;
+				{knobs[parameter].value = value}.defer;
 			});
 		}
 	)
