@@ -1,5 +1,4 @@
-(
-var main, sampleLoader, trackFactory, masterTrackFactory, addressFactory, guiFactory, director, masterDirector, mftFactory, storageFactory, launchpadFactory;
+var main, setup, sampleLoader, trackFactory, masterTrackFactory, addressFactory, guiFactory, director, masterDirector, mftFactory, storageFactory, launchpadFactory, synthDefLoader, synthDefs;
 ~global_APP_DIRECTORY = thisProcess.nowExecutingPath.dirname.asString;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
 director = "core/controlDirector.scd".loadRelative[0].value();
@@ -11,26 +10,29 @@ mftFactory = "midi/mft.scd".loadRelative[0];
 launchpadFactory = "midi/launchpad.scd".loadRelative[0];
 storageFactory = "core/storage.scd".loadRelative[0];
 sampleLoader = "core/sampleLoader.scd".loadRelative[0];
-main = {
+synthDefLoader = "core/synthdefLoader.scd".loadRelative[0];
+synthDefs = [
+  "core/synthdefs/masterChannel.scd".loadRelative[0],
+  "core/synthdefs/sampler.scd".loadRelative[0]
+];
+
+setup = {
 	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage, params, masterTrack, masterBus;
 
-	"core/synthdefs.scd".loadRelative[0].add;
-	"core/masterChannel.scd".loadRelative[0].add;
-
-  0.5.wait;
   samples = sampleLoader.create(sampleLoader.getRelativeFolderPath('samples'));
-  masterBus = Bus.audio();
+  masterBus = Bus.audio(s, 4);
+  masterTrack = masterTrackFactory.create(masterBus);
+  masterDirector.addTrack(masterTrack);
+
   tracks = 3.collect({
     arg index;
     var track;
 
-    track = trackFactory.create(samples, index);
+    track = trackFactory.create(samples, index, masterBus);
 		director.addTrack(track);
 		track;
   });
 
-  masterTrack = masterTrackFactory.create(masterBus);
-  masterDirector.addTrack(masterTrack);
 
   setInitialSoundFile = {
     arg trackGUI, index;
@@ -46,10 +48,10 @@ main = {
 
   storage = storageFactory.create(director, 65);
   x = storage;
-/*
 	MIDIClient.init;
-	mft = mftFactory.create(director, storage);
+	mft = mftFactory.create(director, storage, masterDirector);
 	director.registerUI(mft, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
+  masterDirector.registerUI(mft, [\m_reverbIn, \m_hpf, \m_lpf, \m_distortion, \m_volume]);
   launchpad = launchpadFactory.create(storage, director);
 
   params = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
@@ -61,9 +63,11 @@ main = {
       director.resetParameter(address);
     })
   })
-*/
+};
+
+main = {
+  synthDefLoader.addAllSynthDefs(synthDefs, setup);
+  "DONE".postln;
 };
 
 s.waitForBoot(main);
-)
-

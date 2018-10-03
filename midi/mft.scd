@@ -1,4 +1,4 @@
-var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, levelOneParams, levelTwoParams, clickParams, addressesA, addressesB, addressesC, addressFactory, timerFactory, params_to_controller;
+var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, levelOneParams, levelTwoParams, clickParams, addressesA, addressesB, addressesC, addressFactory, timerFactory, params_to_controller, masterChannelLevelOne, masterChannelLevelTwo, masterParams_to_controller;
 translatorMaker = "translator.scd".loadRelative[0];
 rangeFactory = "encToRange.scd".loadRelative[0];
 addressFactory = "../core/address.scd".loadRelative[0];
@@ -36,10 +36,21 @@ params_to_controller = (
   \volume: (level: [0, 1], col: 3, scale: \default)
 );
 
+masterChannelLevelOne = [\m_reverbIn, \m_lpf, \m_volume];
+masterChannelLevelTwo = [\m_reverbIn, \m_hpf, \m_distortion];
+masterParams_to_controller = (
+  \m_reverbIn: (level: [0, 1], col: 1, scale: \default),
+  \m_hpf: (level: [1], col: 2, scale: \default),
+  \m_lpf: (level: [0], col: 2, scale: \default),
+  \m_distortion: (level: [1], col: 3, scale: \default),
+  \m_volume: (level: [0], col: 3, scale: \default),
+  \m_interpolationTime: (level: [0], col: 0, scale: \default)
+);
+
 (
   create: {
-    arg self, director, storage;
-    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset, output;
+    arg self, director, storage, masterDirector;
+    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset, output, masterChannelActionUp, masterChannelActionDown, masterFeedback;
 
     mftActionLevelOne = {
       arg knobInput;
@@ -52,6 +63,17 @@ params_to_controller = (
       var noteNumber, address;
       address = addressesB[knobInput[1]][knobInput[0]];
       director.accumParameter(address, knobInput[2]);
+    };
+
+    masterChannelActionUp = {
+      arg knobInput;
+      var param = masterChannelLevelOne[knobInput[0] - 1];
+      masterDirector.accumParameter((name: param, track: 0), knobInput[2]);
+    };
+    masterChannelActionDown = {
+      arg knobInput;
+      var param = masterChannelLevelTwo[knobInput[0] - 1];
+      masterDirector.accumParameter((name: param, track: 0), knobInput[2]);
     };
     
     reverseTimers = Array.fill(3, {timerFactory.create(0.25)});
@@ -99,33 +121,70 @@ params_to_controller = (
       rateReset.value(track, (velocity > 0));
     }, chan: 1, msgNum: [1,5,9], msgType: \control, srcID: port.uid);
 
-    MIDIdef.new(\master_ctrls, {
+    MIDIdef.new(\interp_ctrl, {
       |noteNumber, velocity, channel|
       var gridMsg = midi_to_grid.value(velocity, noteNumber);
       storage.accumInterpolationTime(gridMsg[2]);
     }, msgNum: 12, msgType: \control, srcID: port.uid);
 
+    MIDIdef.new(\master_controls, {
+      |noteNumber, velocity, channel|
+      var gridMsg = midi_to_grid.value(velocity, noteNumber);
+      switch (channel,
+        0, { masterChannelActionUp.value(gridMsg) },
+        4, { masterChannelActionDown.value(gridMsg) },
+        {}
+      );
+    }, msgNum: (13..15), msgType: \control, srcID: port.uid);
+
+    masterFeedback = {
+      arg address, value;
+      var parameter, mapping;
+      parameter = address['name'];
+      mapping = masterParams_to_controller[parameter];
+      mapping.level.do({
+        arg i;
+        var noteNum, channel, velocity, scale;
+        scale = mapping.scale;
+        if (scale == \default, 
+          {velocity = (value * 127).asInteger},
+          {velocity = value.linlin(scale[0], scale[1], scale[2], scale[3]).asInteger}
+        );
+        noteNum = grid_to_midi.value(mapping.col, address['track'] + 3);
+        channel = i * 4;
+        output.control(channel, noteNum, velocity);
+      });
+    };
+
     (
-      director: director,
-      connection: connection,
       receiveParameter: {
         arg self, address, value;
         var parameter, mapping;
 
-        parameter = address['name'];
-        mapping = params_to_controller[parameter];
-        mapping.level.do({
-          arg i;
-          var noteNum, channel, velocity, scale;
-          scale = mapping.scale;
-          if (scale == \default, 
-            {velocity = (value * 127).asInteger},
-            {velocity = value.linlin(scale[0], scale[1], scale[2], scale[3]).asInteger}
-          );
-          noteNum = grid_to_midi.value(mapping.col, address['track']);
-          channel = i * 4;
-          output.control(channel, noteNum, velocity);
-        })
+        switch (address.name,
+          \m_reverbIn, {masterFeedback.value(address, value)},
+          \m_hpf, {masterFeedback.value(address, value)},
+          \m_lpf, {masterFeedback.value(address, value)},
+          \m_distortion, {masterFeedback.value(address, value)},
+          \m_volume, {masterFeedback.value(address, value)},
+          \m_interpolationTime, {masterFeedback.value(address, value)},
+          {
+            parameter = address['name'];
+            mapping = params_to_controller[parameter];
+            mapping.level.do({
+              arg i;
+              var noteNum, channel, velocity, scale;
+              scale = mapping.scale;
+              if (scale == \default, 
+                {velocity = (value * 127).asInteger},
+                {velocity = value.linlin(scale[0], scale[1], scale[2], scale[3]).asInteger}
+              );
+              noteNum = grid_to_midi.value(mapping.col, address['track']);
+              channel = i * 4;
+              output.control(channel, noteNum, velocity);
+            });
+          }
+        )
       }
     )
   }

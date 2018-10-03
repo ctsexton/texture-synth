@@ -98,7 +98,6 @@ interpolateMementos = {
       accumInterpolationTime: {
         arg self, accum;
         interpolationTime.accum(accum);
-        interpolationTime.getValue.postln;
       }
     )
 

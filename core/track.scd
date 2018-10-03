@@ -2,7 +2,7 @@ var parameter;
 parameter = "parameter.scd".loadRelative[0];
 (
 create: {
-	arg self, allSamples, trackIndex;
+	arg self, allSamples, trackIndex, masterBus;
 	var playbackIndex, synth, feedback, initialSound, parameters;
 
   initialSound = allSamples[trackIndex];
@@ -38,7 +38,8 @@ create: {
 				\volume: parameters.volume.getValueForSynth(),
 				\lpfCutoff: parameters.lpfCutoff.getValueForSynth(),
 				\hpfCutoff: parameters.hpfCutoff.getValueForSynth(),
-        \status: 0
+        \status: 0,
+        \outputBus: masterBus
 			]);
 		},
 		stopSynth: {

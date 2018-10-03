@@ -75,8 +75,6 @@ addressFactory = "../core/address.scd".loadRelative[0];
 			arg self, address, value;
 			var parameter;
 
-      [address.name, address.track, value].postln;
-
 			if (address['track'] == trackIndex, {
 				parameter = address['name'];
 				{knobs[parameter].value = value}.defer;
