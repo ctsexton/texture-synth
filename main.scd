@@ -48,6 +48,7 @@ setup = {
 
   storage = storageFactory.create(director, 65);
   x = storage;
+  /*
 	MIDIClient.init;
 	mft = mftFactory.create(director, storage, masterDirector);
 	director.registerUI(mft, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
@@ -63,6 +64,7 @@ setup = {
       director.resetParameter(address);
     })
   })
+  */
 };
 
 main = {
