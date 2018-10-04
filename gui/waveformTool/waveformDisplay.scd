@@ -6,6 +6,9 @@
 
     wave = SoundFileView.new(canvas, bounds);
     wave.gridOn = false;
+    wave.peakColor = Color.new(0.85, 0.55, 0.85);
+    wave.rmsColor = Color.new(0.8, 0.5, 0.8);
+    wave.setSelectionColor(0, Color.new(1, 1, 1, 0.15));
     wave.timeCursorOn = true;
     wave.timeCursorColor = Color.red;
     wave.mouseUpAction = {

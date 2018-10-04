@@ -5,7 +5,7 @@ addressFactory = "../core/address.scd".loadRelative[0];
     |self, canvas, director|
     var parameters, specs, knobSettings, knobs, trackIndex;
     trackIndex = 0;
-    parameters = [\m_interpolationTime, \m_reverbIn, \m_lpf, \m_hpf, \m_distortion, \m_volume];
+    parameters = [\m_reverbIn, \m_lpf, \m_hpf, \m_distortion, \m_volume];
 
 
   specs = ();
@@ -15,43 +15,43 @@ addressFactory = "../core/address.scd".loadRelative[0];
   });
 
 	knobSettings = (
-		m_interpolationTime: (
-      order: 0,
-			label: 'Interpolation Time',
-			controlSpec: ControlSpec.new(0, 5),
-			onChange: {|self, val| director.setParameter(specs['m_interpolationTime'], val.value)},
-			initVal: 0
-		),
+		//m_interpolationTime: (
+    //  order: 0,
+		//	label: 'Interpolation Time',
+		//	controlSpec: ControlSpec.new(0, 5),
+		//	onChange: {|self, val| director.setParameter(specs['m_interpolationTime'], val.value)},
+		//	initVal: 0
+		//),
 		m_reverbIn: (
-      order: 1,
+      order: 0,
 			label: \Reverb,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(specs['m_reverbIn'], val.value)},
 			initVal: 0
 		),
 		m_lpf: (
-      order: 2,
+      order: 1,
 			label: \LowPass,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(specs['m_lpf'], val.value)},
 			initVal: 1
 		),
 		m_hpf: (
-      order: 3,
+      order: 2,
 			label: \HiPass,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(specs['m_hpf'], val.value)},
 			initVal: 0
 		),
 		m_distortion: (
-      order: 4,
+      order: 3,
 			label: \Distortion,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(specs['m_distortion'], val.value)},
 			initVal: 0
 		),
 		m_volume: (
-      order: 5,
+      order: 4,
 			label: \Volume,
 			controlSpec: ControlSpec.new(0, 1),
 			onChange: {|self, val| director.setParameter(specs['m_volume'], val.value)},
@@ -61,7 +61,7 @@ addressFactory = "../core/address.scd".loadRelative[0];
 	knobs = knobSettings.collect({
 		arg knob, key;
 		var ezKnob;
-		EZKnob.new(canvas, Rect(knob['order'] * 225 + 250, 0, 200, 200), knob.label, knob.controlSpec, {|val| knob.onChange(val)}, knob.initVal);
+		EZKnob.new(canvas, Rect(knob['order'] * 225, 0, 200, 200), knob.label, knob.controlSpec, {|val| knob.onChange(val)}, knob.initVal);
 	});
 	knobs.do({
 		|knob|

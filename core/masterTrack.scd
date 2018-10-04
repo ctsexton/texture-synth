@@ -6,7 +6,6 @@ create: {
 	var parameters, synth;
 
   parameters = (
-		m_interpolationTime: parameter.create('m_interpolationTime', 0, 0, 5, 0.01),
 	  m_reverbIn: parameter.create('m_reverbIn', 0, 0, 1, 0.01),
 		m_lpf: parameter.create('m_lpf', 1, 0, 1, 0.005),
 		m_hpf: parameter.create('m_hpf', 0, 0, 1, 0.005),

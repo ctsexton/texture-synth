@@ -185,6 +185,10 @@ masterParams_to_controller = (
             });
           }
         )
+      },
+      receiveInterpolationTime: {
+        |self, time|
+        output.control(0, 12, time * 0.2 * 127);
       }
     )
   }

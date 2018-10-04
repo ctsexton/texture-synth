@@ -1,6 +1,6 @@
 (
 create: {
-	arg self, parameter, init, min, max, increment, updateFunc = nil, getValueForSynth = nil;
+	arg self, parameter, init = 0, min = 0, max = 1, increment = 0.01, updateFunc = nil, getValueForSynth = nil;
 	var value, setNumber, changeFunction, setSynth;
   value = init;
 
@@ -29,11 +29,7 @@ create: {
 			accum = (direction * 2 - 1) * increment;
 			newVal = oldVal + accum;
 
-			if ((newVal >= min) && (newVal <= max),
-				{ setNumber.value(newVal); }
-			);
-
-			newVal;
+			setNumber.value(newVal);
 		},
     change: {
       arg self, newValue;

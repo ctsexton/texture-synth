@@ -22,7 +22,7 @@ SynthDef(\windowLooper, {
 
   out = playback - (diff * ramp);
   out = out.tanh * amplitudeWarp.map(volume.varlag(0.005));
-  out = HPF.ar(RLPF.ar(out, lpfCutoff.varlag(0.01).lincurve(0, 1, 20, 10000, 2.5), 1), hpfCutoff.varlag(0.05).lincurve(0, 1, 30, 2500, 2));
+  out = HPF.ar(RLPF.ar(out, lpfCutoff.varlag(0.01).lincurve(0, 1, 20, 10000, 2.5), 1), hpfCutoff.varlag(0.05).lincurve(0, 1, 30, 5000, 2));
 
   Out.ar(outputBus, out!2);
   FreeSelf.kr(status);

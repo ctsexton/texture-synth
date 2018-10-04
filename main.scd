@@ -42,17 +42,18 @@ setup = {
     trackGUI.waveformGUI.receiveParameter(address, soundFile);
   };
 
-  QtGUI.palette = QPalette.dark;
-	allTrackGUIs = guiFactory.create(director, samples, masterDirector);
-  allTrackGUIs.do(setInitialSoundFile);
-
   storage = storageFactory.create(director, 65);
   x = storage;
-  /*
+
+  QtGUI.palette = QPalette.dark;
+	allTrackGUIs = guiFactory.create(director, samples, masterDirector, storage);
+  allTrackGUIs.do(setInitialSoundFile);
+
 	MIDIClient.init;
 	mft = mftFactory.create(director, storage, masterDirector);
 	director.registerUI(mft, [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume]);
   masterDirector.registerUI(mft, [\m_reverbIn, \m_hpf, \m_lpf, \m_distortion, \m_volume]);
+  storage.registerUI(mft);
   launchpad = launchpadFactory.create(storage, director);
 
   params = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
@@ -64,7 +65,6 @@ setup = {
       director.resetParameter(address);
     })
   })
-  */
 };
 
 main = {

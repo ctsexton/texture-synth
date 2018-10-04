@@ -1,6 +1,8 @@
-var interpolateValues, interpolateMementos, cubicWarp, transition, interpolationTime, parameter, previousRoutine;
+var interpolateValues, interpolateMementos, cubicWarp, transition, interpolationTime, parameter, previousRoutine, userInterfaces;
 parameter = "parameter.scd".loadRelative[0];
 previousRoutine = Routine({});
+
+userInterfaces = Array.new(4);
 
 interpolationTime = parameter.create('interpolationTime', 0, 0, 5, 0.05);
 
@@ -65,7 +67,7 @@ interpolateMementos = {
       transition: {
         arg self, from, to;
         var steps = interpolationTime.getValue() / 0.05;
-        if (steps == 0, 
+        if (steps < 1, 
           {self.restore(to)}, 
           {
             previousRoutine.stop;
@@ -93,13 +95,25 @@ interpolateMementos = {
       },
       setInterpolationTime: {
         arg self, newDuration;
-        interpolationTime = newDuration;
+        interpolationTime.change(newDuration);
+        self.updateAllGUIs();
       },
       accumInterpolationTime: {
         arg self, accum;
+
         interpolationTime.accum(accum);
+        self.updateAllGUIs();
+      },
+      registerUI: {
+        |self, ui|
+        userInterfaces.add(ui);
+      },
+      updateAllGUIs: {
+        userInterfaces.do({
+          |ui|
+          ui.receiveInterpolationTime(interpolationTime.getValue());
+        })
       }
     )
-
   }
 )
