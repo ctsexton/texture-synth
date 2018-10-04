@@ -20,7 +20,7 @@ setup = {
 	var samples, tracks, mft, launchpad, setInitialSoundFile, allTrackGUIs, storage, params, masterTrack, masterBus;
 
   samples = sampleLoader.create(sampleLoader.getRelativeFolderPath('samples'));
-  masterBus = Bus.audio(s, 4);
+  masterBus = Bus.audio(s, 2);
   masterTrack = masterTrackFactory.create(masterBus);
   masterDirector.addTrack(masterTrack);
 
