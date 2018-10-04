@@ -57,6 +57,10 @@ interpolateMementos = {
           {director.restoreSettings(memory); true };
         )
       },
+      verify: {
+        arg self, index;
+        verify.value(index);
+      },
       interpolate: {
         arg self, fromIndex, toIndex, interpolation;
         var result;
@@ -113,6 +117,16 @@ interpolateMementos = {
           |ui|
           ui.receiveInterpolationTime(interpolationTime.getValue());
         })
+      },
+      saveToDisk: {
+        var store = (data: storage);
+        Archive.global.put(\textureSynthPresets, store);
+        Archive.write();
+      },
+      restoreFromDisk: {
+        var store;
+        store = Archive.global.at(\textureSynthPresets);
+        storage = store.data;
       }
     )
   }

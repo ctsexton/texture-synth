@@ -1,3 +1,4 @@
+(
 var main, setup, sampleLoader, trackFactory, masterTrackFactory, addressFactory, guiFactory, director, masterDirector, mftFactory, storageFactory, launchpadFactory, synthDefLoader, synthDefs;
 ~global_APP_DIRECTORY = thisProcess.nowExecutingPath.dirname.asString;
 addressFactory = (~global_APP_DIRECTORY +/+ "/core/address.scd").load;
@@ -55,6 +56,7 @@ setup = {
   masterDirector.registerUI(mft, [\m_reverbIn, \m_hpf, \m_lpf, \m_distortion, \m_volume]);
   storage.registerUI(mft);
   launchpad = launchpadFactory.create(storage, director);
+  l = launchpad;
 
   params = [\position, \window, \rate, \lpfCutoff, \hpfCutoff, \volume];
   3.do({
@@ -73,3 +75,12 @@ main = {
 };
 
 s.waitForBoot(main);
+)
+
+x.saveToDisk();
+
+x.restoreFromDisk();
+
+l.restore();
+
+Platform.userAppSupportDir

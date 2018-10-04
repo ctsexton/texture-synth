@@ -1,6 +1,5 @@
 ## To Do
 
- - !!! save memories
  - track volume - click to play^2
  - double click to reset all knobs
 

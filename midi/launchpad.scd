@@ -1,9 +1,11 @@
-var translatorMaker, midi_to_grid, grid_to_midi, rangeFactory, colorPalette;
+var translatorMaker, midi_to_grid, grid_to_midi, index_to_grid, rangeFactory, colorPalette, grid_to_LP;
 translatorMaker = "translator.scd".loadRelative[0];
 rangeFactory = "encToRange.scd".loadRelative[0];
 
 midi_to_grid = translatorMaker.newMIDItoGRID(16);
+index_to_grid = translatorMaker.newMIDItoGRID(8);
 grid_to_midi = translatorMaker.newGRIDtoMIDI(8);
+grid_to_LP = translatorMaker.newGRIDtoMIDI(16);
 
 colorPalette = (yellow: 127, red: 3, green: 48, off: 0);
 
@@ -22,8 +24,8 @@ colorPalette = (yellow: 127, red: 3, green: 48, off: 0);
     previousNote = 127;
 
     toLP = {
-      arg noteNum, velocity;
-      output.noteOn(0, noteNum, velocity);
+      arg noteNum, color;
+      output.noteOn(0, noteNum, colorPalette[color]);
     };
 
     toLPTop = {
@@ -38,14 +40,14 @@ colorPalette = (yellow: 127, red: 3, green: 48, off: 0);
     selectToSave = {
       arg index, noteNum;
       storage.save(index);
-      toLP.value(previousNote, 127);
-      toLP.value(noteNum, 3); 
+      toLP.value(previousNote, \yellow);
+      toLP.value(noteNum, \red); 
       previousNote = noteNum;
     };
     selectToRecall = {
       arg index, noteNum;
       if (storage.transitionTo(index),
-        { toLP.value(previousNote, 127); toLP.value(noteNum, 48); previousNote = noteNum }
+        { toLP.value(previousNote, \yellow); toLP.value(noteNum, \green); previousNote = noteNum }
       )
     };
 
@@ -88,5 +90,20 @@ colorPalette = (yellow: 127, red: 3, green: 48, off: 0);
     }, nil, nil, srcID: port.uid);
 
     clearLP.value();
+    (
+      restore: {
+        64.do({
+          arg i;
+          var index = i;
+          if (storage.verify(index + 1)[0] == true, {
+            var xy = index_to_grid.value(index, 127);
+            var noteNum = grid_to_LP.value(xy[0], xy[1]);
+            xy.postln;
+            noteNum.postln;
+            toLP.value(noteNum, \yellow);
+          })
+        })
+      }
+    )
   }
 )
