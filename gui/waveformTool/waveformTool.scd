@@ -26,7 +26,7 @@ create: {
 				switch (address['name'],
 					\position, {waveformDisplay.setPosition(value)},
 					\window, {waveformDisplay.setWindow(value)},
-          \sample, {waveformDisplay.updateSoundFile(value['soundFile'])},
+          \sample, {waveformDisplay.updateSoundFile(value.soundFile)},
           \status, {waveformDisplay.togglePlayhead(value)}
 				);
 			});

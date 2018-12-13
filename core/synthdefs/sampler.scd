@@ -13,7 +13,7 @@ SynthDef(\windowLooper, {
   Out.ar(feedback, isOutsideBounds);
   Out.kr(playhead, index * BufFrames.kr(sample));
    
-  playback = BufRd.ar(1, sample, index * BufFrames.kr(sample), 1, 4);
+  playback = BufRd.ar(2, sample, index * BufFrames.kr(sample), 1, 4);
 
   // Ramp & Switch
   env = Env([1, 1, 0], [0, 512/SampleRate.ir]);
@@ -24,6 +24,6 @@ SynthDef(\windowLooper, {
   out = out.tanh * amplitudeWarp.map(volume.varlag(0.005));
   out = HPF.ar(RLPF.ar(out, lpfCutoff.varlag(0.01).lincurve(0, 1, 20, 10000, 2.5), 1), hpfCutoff.varlag(0.05).lincurve(0, 1, 30, 5000, 2));
 
-  Out.ar(outputBus, out!2);
+  Out.ar(outputBus, out);
   FreeSelf.kr(status);
 });

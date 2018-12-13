@@ -50,7 +50,7 @@ masterParams_to_controller = (
 (
   create: {
     arg self, director, storage, masterDirector;
-    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset, output, masterChannelActionUp, masterChannelActionDown, masterFeedback;
+    var mft, mftActionLevelOne, mftActionLevelTwo, port, connection, rateDoubleClick, reverseTimers, resetTimers, rateReset, output, masterChannelActionUp, masterChannelActionDown, masterFeedback, poswinTimers, poswinDoubleClick;
 
     mftActionLevelOne = {
       arg knobInput;
@@ -96,6 +96,16 @@ masterParams_to_controller = (
       )
     };
 
+    poswinTimers = Array.fill(3, {timerFactory.create(0.25)});
+    poswinDoubleClick = {
+      arg track;
+      switch (poswinTimers[track].getStatus, 
+        false, {poswinTimers[track].open},
+        true, {director.resetParameter(addressesA[track][0]); director.resetParameter(addressesB[track][0]); poswinTimers[track].close},
+        {}
+      )
+    };
+
     port = MIDIIn.findPort("Midi Fighter Twister", "Midi Fighter Twister MIDI 1");
     connection = MIDIIn.connect(0, port);
     output = MIDIOut.newByName("Midi Fighter Twister", "Midi Fighter Twister MIDI 1");
@@ -120,6 +130,14 @@ masterParams_to_controller = (
       if (velocity > 0, { rateDoubleClick.value(track) });
       rateReset.value(track, (velocity > 0));
     }, chan: 1, msgNum: [1,5,9], msgType: \control, srcID: port.uid);
+
+    MIDIdef.new(\poswin_buttons, {
+      |velocity, noteNumber, channel|
+      var gridMsg, track;
+      gridMsg = midi_to_grid.value(noteNumber, velocity);
+      track = gridMsg[1];
+      if (velocity > 0, { poswinDoubleClick.value(track) });
+    }, chan: 1, msgNum: [0,4,8], msgType: \control, srcID: port.uid);
 
     MIDIdef.new(\interp_ctrl, {
       |noteNumber, velocity, channel|

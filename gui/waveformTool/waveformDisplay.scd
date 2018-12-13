@@ -8,7 +8,7 @@
     wave.gridOn = false;
     wave.peakColor = Color.new(0.85, 0.55, 0.85);
     wave.rmsColor = Color.new(0.8, 0.5, 0.8);
-    wave.setSelectionColor(0, Color.new(1, 1, 1, 0.15));
+    wave.setSelectionColor(0, Color.new(1, 1, 1, 0.2));
     wave.timeCursorOn = true;
     wave.timeCursorColor = Color.red;
     wave.mouseUpAction = {
@@ -25,10 +25,10 @@
     updatePosition = { {wave.setSelectionStart(0, position * wave.numFrames)}.defer };
     updateWindow = {{wave.setSelectionSize(0, window * wave.numFrames)}.defer;};
 
-    updateTimeCursor = { 
+    updateTimeCursor = {
       playhead.get(
         {|val| {wave.timeCursorPosition = val}.defer }
-      ); 
+      );
       0.02.wait;
     };
     timeCursorAnimation = Routine({updateTimeCursor.loop});

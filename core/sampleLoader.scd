@@ -1,5 +1,3 @@
-var sampleFactory;
-sampleFactory = "sample.scd".loadRelative[0];
 (
   create: {
     arg self, sampleFolderPath;
@@ -8,7 +6,7 @@ sampleFactory = "sample.scd".loadRelative[0];
     files = PathName.new(sampleFolderPath).files;
     files.collect({
       arg path;
-      sampleFactory.create(path);
+      Sample(path);
     });
   },
   getRelativeFolderPath: {

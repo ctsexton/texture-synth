@@ -39,7 +39,7 @@
     },
 		getPlaybackIndex: {
 			arg self, trackIndex;
-			tracks[trackIndex].playbackIndex;
+			tracks[trackIndex].bufferIndexKr;
 		},
 		getParameter: {
 			arg self, address;
@@ -76,7 +76,7 @@
     resetParameter: {
       arg self, address;
       var updatedValue;
-      updatedValue = tracks[address['track']].resetParam(address['name']);
+      updatedValue = tracks[address['track']].resetParameter(address['name']);
 			self.updateAllUIs(address, updatedValue);
     },
 		togglePlayback: {
@@ -85,7 +85,7 @@
       trackIndex = address['track'];
 			if (value == 1,
 				{ tracks[trackIndex].start()},
-				{ tracks[trackIndex].stopSynth() }
+				{ tracks[trackIndex].stop() }
 			);
       self.updateAllUIs(address, value);
 		},

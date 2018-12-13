@@ -44,7 +44,7 @@ create: {
       self.updateSynth(parameter);
 			updatedValue;
 		},
-    resetParam: {
+    resetParameter: {
       arg self, parameter;
       var updatedValue;
       updatedValue = parameters[parameter].resetValue();
