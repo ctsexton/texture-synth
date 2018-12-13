@@ -1,13 +1,12 @@
 { |trackControllers, masterController|
-  var mft, launchpad, controllerView, masterControllerView, tracksTransmit, masterTransmit;
-  MIDIClient.init;
+  var mft, controllerView, masterControllerView, tracksTransmit, masterTransmit;
   mft = MFT();
 
   tracksTransmit = { |level, x, y, val|
     switch (x,
       0, { switch (level, 0, { trackControllers[y].incrementParameter('position', val) }, 1, { trackControllers[y].incrementParameter('window', val) }, {} ) },
-      1, {},
-      2, { trackControllers[y].incrementParameter('rate', val) },
+      1, { trackControllers[y].incrementParameter('rate', val) },
+      2, { switch (level, 0, { trackControllers[y].incrementParameter('lpfCutoff', val) }, 1, { trackControllers[y].incrementParameter('hpfCutoff', val) }, {} ) },
       3, { trackControllers[y].incrementParameter('volume', val)}
     )
   };
@@ -33,7 +32,9 @@
           'volume', { mft.ledset(0, 3, id, val); mft.ledset(1, 3, id, val) },
           'position', { mft.ledset(0, 0, id, val) },
           'window', { mft.ledset(1, 0, id, val) },
-          'rate', { mft.ledset(0, 2, id, val) }
+          'rate', { mft.ledset(0, 1, id, val) },
+          'lpfCutoff', { mft.ledset(0, 2, id, val) },
+          'hpfCutoff', { mft.ledset(1, 2, id, val) }
         )
       }
     )

@@ -17,7 +17,21 @@ var createGUI = {
   // register each GUI for param updates from trackControllers
 };
 
-var setupMIDI = "midi/setup.scd".loadRelative[0];
+var mapMFT = "midi/mapMFT.scd".loadRelative[0];
+var mapLP = "midi/mapLP.scd".loadRelative[0];
+var setupMIDI = { |trackControllers, masterController|
+  MIDIClient.init;
+  mapMFT.value(trackControllers, masterController);
+  mapLP.value(trackControllers);
+};
+
+var resetAllControls = { |masterController, trackControllers|
+  ['reverb', 'hpf', 'lpf', 'volume'].do({ |item| masterController.resetParameter(item) });
+  trackControllers.do({ |track| 
+    track.togglePlayback(true);
+    ['position', 'window', 'rate', 'lpfCutoff', 'hpfCutoff', 'volume'].do({ |item| track.resetParameter(item) });
+  });
+};
 
 var setup = {  
   var samples = loadSamples.value;
@@ -29,11 +43,10 @@ var setup = {
   });
   var gui = createGUI.value(trackControllers, masterController);
   var midi = setupMIDI.value(trackControllers, masterController);
-  masterController.setParameter('volume', 1);
-  trackControllers.do({ |track| 
-    track.togglePlayback(true);
-    ['position', 'window', 'rate', 'volume'].do({ |item| track.resetParameter(item) }) 
+  trackControllers.do({ |track|
+    track.storage = Storage(64);
   });
+  resetAllControls.value(masterController, trackControllers);
 };
 
 s.waitForBoot( {
