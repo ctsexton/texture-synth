@@ -1,10 +1,3 @@
-/*
-3. run SETUP:
-  - create GUI for each track and connect
-  - create GUI for master and connect
-  - reset all track params
-*/
-
 var addAllSynthDefs = "core/synthdefLoader.scd".loadRelative[0];
 var synthDefs = [
   "core/synthdefs/sampler.scd".loadRelative[0],
@@ -19,8 +12,12 @@ var loadSamples = {
 };
 
 var createGUI = {
-  //
+  // create a GUI for each track
+  // add each GUI to master canvas
+  // register each GUI for param updates from trackControllers
 };
+
+var setupMIDI = "midi/setup.scd".loadRelative[0];
 
 var setup = {  
   var samples = loadSamples.value;
@@ -31,7 +28,12 @@ var setup = {
     TrackMediator(Track(index, samples[index], masterBus));
   });
   var gui = createGUI.value(trackControllers, masterController);
-  // set initial soundfile for gui
+  var midi = setupMIDI.value(trackControllers, masterController);
+  masterController.setParameter('volume', 1);
+  trackControllers.do({ |track| 
+    track.togglePlayback(true);
+    ['position', 'window', 'rate', 'volume'].do({ |item| track.resetParameter(item) }) 
+  });
 };
 
 s.waitForBoot( {

@@ -1,0 +1,55 @@
+{ |trackControllers, masterController|
+  var mft, launchpad, controllerView, masterControllerView, tracksTransmit, masterTransmit;
+  MIDIClient.init;
+  mft = MFT();
+
+  tracksTransmit = { |level, x, y, val|
+    switch (x,
+      0, { switch (level, 0, { trackControllers[y].incrementParameter('position', val) }, 1, { trackControllers[y].incrementParameter('window', val) }, {} ) },
+      1, {},
+      2, { trackControllers[y].incrementParameter('rate', val) },
+      3, { trackControllers[y].incrementParameter('volume', val)}
+    )
+  };
+  masterTransmit = { |x, val|
+    switch (x, 
+      0, { masterController.incrementParameter('reverb', val) },
+      1, { masterController.incrementParameter('hpf', val) },
+      2, { masterController.incrementParameter('lpf', val) },
+      3, { masterController.incrementParameter('volume', val) }
+    )
+  };
+
+  mft.gridResponderFunction = { |level, x, y, val|
+    switch (y, 
+      3, { masterTransmit.value(x, val) },
+      { tracksTransmit.value(level, x, y, val) }
+    );
+  };
+  controllerView = { |id|
+    (
+      receive: { |self, paramName, val|
+        switch (paramName,
+          'volume', { mft.ledset(0, 3, id, val); mft.ledset(1, 3, id, val) },
+          'position', { mft.ledset(0, 0, id, val) },
+          'window', { mft.ledset(1, 0, id, val) },
+          'rate', { mft.ledset(0, 2, id, val) }
+        )
+      }
+    )
+  };
+  trackControllers.do({ |track, index|
+    track.userInterfaces = track.userInterfaces.value.add(controllerView.value(index));
+  });
+  masterControllerView = (
+    receive: { |self, paramName, val|
+      switch (paramName,
+        'reverb', { mft.ledset(0, 0, 3, val) },
+        'hpf', { mft.ledset(0, 1, 3, val) },
+        'lpf', { mft.ledset(0, 2, 3, val) },
+        'volume', { mft.ledset(0, 3, 3, val) }
+      )
+    }
+  );
+  masterController.userInterfaces = masterController.userInterfaces.value.add(masterControllerView);
+}
