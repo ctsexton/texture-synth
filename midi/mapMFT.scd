@@ -28,7 +28,6 @@
   mft.onClick = { |x, y, vel|
     switch (vel, 1, {
       switch (y, 3, {}, 
-        x.postln;
         { switch (x, 
             1, { trackControllers[y].negateParameter('rate') },
             {}
