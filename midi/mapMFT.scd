@@ -25,6 +25,28 @@
       { tracksTransmit.value(level, x, y, val) }
     );
   };
+  mft.onClick = { |x, y, vel|
+    switch (vel, 1, {
+      switch (y, 3, {}, 
+        x.postln;
+        { switch (x, 
+            1, { trackControllers[y].negateParameter('rate') },
+            {}
+          )
+        }
+      )
+    }, {})
+  };
+  mft.onDoubleClick = { |x, y|
+    switch (y, 3, {},
+      { switch (x, 
+        0, { trackControllers[y].resetParameter('position'); trackControllers[y].resetParameter('window') },
+        1, { trackControllers[y].resetParameter('rate') },
+        2, { trackControllers[y].resetParameter('lpfCutoff'); trackControllers[y].resetParameter('hpfCutoff') },
+        3, { trackControllers[y].resetParameter('volume') }
+      ) }
+    )
+  };
   controllerView = { |id|
     (
       receive: { |self, paramName, val|
@@ -32,7 +54,7 @@
           'volume', { mft.ledset(0, 3, id, val); mft.ledset(1, 3, id, val) },
           'position', { mft.ledset(0, 0, id, val) },
           'window', { mft.ledset(1, 0, id, val) },
-          'rate', { mft.ledset(0, 1, id, val) },
+          'rate', { mft.ledset(0, 1, id, val.linlin(-2, 2, 0, 1)) },
           'lpfCutoff', { mft.ledset(0, 2, id, val) },
           'hpfCutoff', { mft.ledset(1, 2, id, val) }
         )
